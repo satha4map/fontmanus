@@ -163,7 +163,8 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, select:focus-visi
 .orb-three { width: 81px; height: 81px; top: 72px; right: 73px; border-radius: 50%; font-size: 50px; }
 .hero-arc { position: absolute; width: 350px; height: 350px; bottom: -258px; right: -80px; border: 1px solid rgba(237,208,176,.38); border-radius: 50%; }
 
-.content-grid { display: grid; grid-template-columns: 324px minmax(0, 1fr); gap: 28px; padding: 38px 52px 16px; direction: ltr; }
+.workspace-menu-button { display: none; }
+.content-grid { display: grid; grid-template-columns: 324px minmax(0, 1fr); gap: 28px; padding: 24px 52px 16px; direction: ltr; }
 .control-panel, .preview-stack { direction: rtl; }
 .control-panel { height: fit-content; border: 1px solid #e1d8cb; border-radius: 18px; overflow: hidden; background: #fffdf8; box-shadow: 0 14px 31px rgba(83,66,46,.06); }
 .panel-heading { display: flex; align-items: start; justify-content: space-between; padding: 23px 22px 18px; border-bottom: 1px solid #ece5da; }
@@ -309,6 +310,7 @@ input[type="range"]::-moz-range-thumb { width: 11px; height: 11px; border: 2px s
   .mobile-close, .menu-button { display: grid; }
   .workspace { margin-left: 0; }
   .topbar { height: 54px; padding: 0 16px; }
+  .workspace-menu-button { position: sticky; top: 12px; z-index: 10; display: inline-flex; align-items: center; gap: 6px; margin: 12px 16px 0 auto; padding: 8px 11px; border: 1px solid #ddd2c5; border-radius: 9px; color: #536361; background: rgba(255,253,248,.94); box-shadow: 0 5px 15px rgba(83,66,46,.08); font-size: 10px; }
   .menu-button { place-items: center; padding: 8px; }
   .topbar-actions .utility-button { display: none; }
   .telegram-top-button { padding: 6px 8px; font-size: 9px; }

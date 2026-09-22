@@ -320,39 +320,7 @@ export default function Home() {
       </aside>
 
       <main className="workspace">
-        <header className="topbar">
-          <button className="menu-button" onClick={() => setMenuOpen(true)} aria-label="فتح القائمة"><Menu size={21} /></button>
-          <div className="crumbs">
-            <span>مساحة العمل</span>
-            <span className="crumb-separator">/</span>
-            <strong>مختبر أحمد النهر</strong>
-          </div>
-          <div className="topbar-actions">
-            <a className="telegram-top-button" href="https://t.me/royalvoiceowner" target="_blank" rel="noreferrer"><Send size={15} /> تيليجرام</a>
-            <button className="utility-button" onClick={resetWorkspace}><RotateCcw size={17} /> إعادة ضبط</button>
-            <button className="help-button" aria-label="مساعدة"><CircleHelp size={19} /></button>
-            <div className="avatar">هـ</div>
-          </div>
-        </header>
-
-        <section className="hero" id="playground">
-          <div className="hero-art" aria-hidden="true">
-            <div className="type-orb orb-one">ع</div>
-            <div className="type-orb orb-two">ط</div>
-            <div className="type-orb orb-three">م</div>
-            <div className="hero-arc" />
-          </div>
-          <div className="hero-copy">
-            <div className="eyebrow"><span /> مختبر تفاعلي للكتابة العربية</div>
-            <h1>دع الحرف<br /><em>يتنفّس.</em></h1>
-            <p>استعرض خصائص OpenType وفعّلها لحظةً بلحظة. كل تعديل يظهر مباشرة في النص، ثم يتحول إلى CSS جاهز للاستخدام.</p>
-          </div>
-          <div className="hero-stat">
-            <div className="stat-line"><span>الخصائص المفعّلة</span><strong>{activeFeatures.length.toString().padStart(2, "0")}</strong></div>
-            <div className="stat-track"><span style={{ width: `${Math.max(17, activeFeatures.length * 12.5)}%` }} /></div>
-            <small>من أصل {features.length} ميزات متاحة</small>
-          </div>
-        </section>
+        <button className="workspace-menu-button" onClick={() => setMenuOpen(true)} aria-label="فتح القائمة"><Menu size={18} /> القائمة</button>
 
         <section className="content-grid">
           <div className="control-panel" id="features">
