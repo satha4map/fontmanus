@@ -8,7 +8,7 @@ import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
-import { bakeFontFeatures, MAX_FONT_BYTES } from "../fontProcessor";
+import { bakeFontFeatures, inspectFontAxes, MAX_FONT_BYTES } from "../fontProcessor";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -35,12 +35,22 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  app.post("/api/fonts/axes", express.raw({ type: "*/*", limit: `${MAX_FONT_BYTES}b` }), async (req, res) => {
+    try {
+      const input = Buffer.isBuffer(req.body) ? req.body : Buffer.from(req.body ?? "");
+      res.json({ axes: await inspectFontAxes(input) });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "تعذّر قراءة محاور الخط";
+      res.status(422).json({ error: message });
+    }
+  });
   app.post("/api/fonts/bake", express.raw({ type: "*/*", limit: `${MAX_FONT_BYTES}b` }), async (req, res) => {
     try {
       const featuresHeader = req.header("x-opentype-features") ?? "";
       const features = featuresHeader.split(",").map((feature) => feature.trim()).filter(Boolean);
+      const axes = JSON.parse(req.header("x-opentype-axes") ?? "{}");
       const input = Buffer.isBuffer(req.body) ? req.body : Buffer.from(req.body ?? "");
-      const result = await bakeFontFeatures(input, features);
+      const result = await bakeFontFeatures(input, features, axes);
       const filename = "font-features-embedded.ttf";
       res.status(200)
         .set({

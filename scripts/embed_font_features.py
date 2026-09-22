@@ -9,11 +9,13 @@ them. Existing required features are preserved in the generated lookup set.
 from __future__ import annotations
 
 import sys
+import json
 from pathlib import Path
 from typing import Iterable
 
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables import otTables
+from fontTools.varLib.instancer import instantiateVariableFont
 
 
 NO_REQUIRED_FEATURE = 0xFFFF
@@ -110,17 +112,23 @@ def bake_layout_table(layout_table, selected_tags: set[str]) -> int:
 
 
 def main() -> int:
-    if len(sys.argv) != 4:
-        print("usage: embed_font_features.py INPUT OUTPUT FEATURES", file=sys.stderr)
+    if len(sys.argv) not in (4, 5):
+        print("usage: embed_font_features.py INPUT OUTPUT FEATURES [AXES_JSON]", file=sys.stderr)
         return 2
 
     input_path = Path(sys.argv[1])
     output_path = Path(sys.argv[2])
     selected_tags = {tag.strip().lower() for tag in sys.argv[3].split(",") if tag.strip()}
+    axes = json.loads(sys.argv[4]) if len(sys.argv) == 5 and sys.argv[4] else {}
     if not selected_tags:
         raise ValueError("At least one OpenType feature is required")
 
     font = TTFont(str(input_path), recalcBBoxes=False, recalcTimestamp=False)
+    if axes and "fvar" in font:
+        normalized_axes = {str(tag): float(value) for tag, value in axes.items()}
+        # Fully instantiate the selected location so the downloaded file no longer
+        # depends on a variable-font engine or a later font-feature setting.
+        font = instantiateVariableFont(font, normalized_axes, inplace=False, static=True)
     changed_tables = 0
     changed_systems = 0
     for table_tag in ("GSUB", "GPOS"):

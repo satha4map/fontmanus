@@ -7,10 +7,10 @@ import { randomUUID } from "node:crypto";
 const MAX_FONT_BYTES = 50 * 1024 * 1024;
 const PROCESS_TIMEOUT_MS = 45_000;
 
-function runFontTools(inputPath: string, outputPath: string, features: string) {
+function runPython(scriptName: string, args: string[]) {
   return new Promise<string>((resolve, reject) => {
-    const scriptPath = path.resolve(process.cwd(), "scripts", "embed_font_features.py");
-    const child = spawn("python3", [scriptPath, inputPath, outputPath, features], {
+    const scriptPath = path.resolve(process.cwd(), "scripts", scriptName);
+    const child = spawn("python3", [scriptPath, ...args], {
       stdio: ["ignore", "pipe", "pipe"],
     });
     let stdout = "";
@@ -37,7 +37,22 @@ function runFontTools(inputPath: string, outputPath: string, features: string) {
   });
 }
 
-export async function bakeFontFeatures(input: Buffer, features: string[]) {
+export async function inspectFontAxes(input: Buffer) {
+  if (input.byteLength === 0) throw new Error("ملف الخط فارغ");
+  if (input.byteLength > MAX_FONT_BYTES) throw new Error("حجم الخط يتجاوز الحد المسموح 50MB");
+  const tempDir = path.join(os.tmpdir(), `opentype-axes-${randomUUID()}`);
+  await mkdir(tempDir, { recursive: true });
+  const inputPath = path.join(tempDir, "source-font");
+  try {
+    await writeFile(inputPath, input);
+    const output = await runPython("read_font_axes.py", [inputPath]);
+    return JSON.parse(output) as Array<{ tag: string; name: string; min: number; default: number; max: number }>;
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
+}
+
+export async function bakeFontFeatures(input: Buffer, features: string[], axes: Record<string, number> = {}) {
   if (input.byteLength === 0) throw new Error("ملف الخط فارغ");
   if (input.byteLength > MAX_FONT_BYTES) throw new Error("حجم الخط يتجاوز الحد المسموح 50MB");
 
@@ -52,7 +67,7 @@ export async function bakeFontFeatures(input: Buffer, features: string[]) {
 
   try {
     await writeFile(inputPath, input);
-    const log = await runFontTools(inputPath, outputPath, normalizedFeatures.join(","));
+    const log = await runPython("embed_font_features.py", [inputPath, outputPath, normalizedFeatures.join(","), JSON.stringify(axes)]);
     const output = await readFile(outputPath);
     return { output, log, features: normalizedFeatures };
   } finally {

@@ -34,6 +34,8 @@ type Feature = {
   recommended?: boolean;
 };
 
+type VariableAxis = { tag: string; name: string; min: number; default: number; max: number };
+
 const features: Feature[] = [
   {
     code: "liga",
@@ -124,6 +126,9 @@ export default function Home() {
   const [fontIndex, setFontIndex] = useState(0);
   const [uploadedFont, setUploadedFont] = useState<{ name: string; url: string; family: string } | null>(null);
   const [sourceFontFile, setSourceFontFile] = useState<File | null>(null);
+  const [variableAxes, setVariableAxes] = useState<VariableAxis[]>([]);
+  const [axisValues, setAxisValues] = useState<Record<string, number>>({});
+  const [axisLoading, setAxisLoading] = useState(false);
   const [isBakingFont, setIsBakingFont] = useState(false);
   const [exportProgress, setExportProgress] = useState(0);
   const [exportPhase, setExportPhase] = useState<"idle" | "preparing" | "processing" | "downloading" | "complete">("idle");
@@ -157,9 +162,14 @@ export default function Home() {
     [activeFeatures],
   );
 
+  const variationSettings = useMemo(
+    () => variableAxes.map((axis) => `"${axis.tag}" ${axisValues[axis.tag] ?? axis.default}`).join(", "),
+    [variableAxes, axisValues],
+  );
+
   const cssSnippet = useMemo(
-    () => `.your-text {\n  font-family: ${chosenFont.family};\n  font-size: ${fontSize}px;\n  line-height: ${lineHeight};\n  font-feature-settings: ${featureSettings};\n}`,
-    [chosenFont, featureSettings, fontSize, lineHeight],
+    () => `.your-text {\n  font-family: ${chosenFont.family};\n  font-size: ${fontSize}px;\n  line-height: ${lineHeight};\n  font-feature-settings: ${featureSettings};${variationSettings ? `\n  font-variation-settings: ${variationSettings};` : ""}\n}`,
+    [chosenFont, featureSettings, variationSettings, fontSize, lineHeight],
   );
 
   function toggleFeature(code: string) {
@@ -176,14 +186,34 @@ export default function Home() {
     );
   }
 
-  function handleFontUpload(event: ChangeEvent<HTMLInputElement>) {
+  async function handleFontUpload(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
     const family = `UploadedFont_${file.name.replace(/[^a-zA-Z0-9]/g, "_")}`;
     const url = URL.createObjectURL(file);
     setUploadedFont({ name: file.name.replace(/\.(woff2?|ttf|otf)$/i, ""), url, family });
     setSourceFontFile(file);
+    setVariableAxes([]);
+    setAxisValues({});
+    setAxisLoading(true);
     setFontIndex(fontOptions.length);
+    try {
+      const response = await fetch("/api/fonts/axes", {
+        method: "POST",
+        headers: { "Content-Type": file.type || "application/octet-stream" },
+        body: file,
+      });
+      if (response.ok) {
+        const payload = await response.json() as { axes?: VariableAxis[] };
+        const axes = payload.axes ?? [];
+        setVariableAxes(axes);
+        setAxisValues(Object.fromEntries(axes.map((axis) => [axis.tag, axis.default])));
+      }
+    } catch {
+      setVariableAxes([]);
+    } finally {
+      setAxisLoading(false);
+    }
   }
 
   function downloadBlob(blob: Blob, filename: string) {
@@ -212,6 +242,7 @@ export default function Home() {
         headers: {
           "Content-Type": sourceFontFile.type || "application/octet-stream",
           "X-OpenType-Features": activeFeatures.join(","),
+          "X-OpenType-Axes": JSON.stringify(axisValues),
         },
         body: sourceFontFile,
       });
@@ -275,6 +306,7 @@ export default function Home() {
   function resetWorkspace() {
     setActiveFeatures(["liga", "rlig", "calt"]);
     setFontIndex(0);
+    setAxisValues(Object.fromEntries(variableAxes.map((axis) => [axis.tag, axis.default])));
     setFontSize(64);
     setLineHeight(1.45);
     setText(samplePresets[0]);
@@ -386,6 +418,7 @@ export default function Home() {
                     lineHeight,
                     fontFamily: chosenFont.family,
                     fontFeatureSettings: featureSettings,
+                    fontVariationSettings: variationSettings || undefined,
                   }}
                 />
                 <div className="stage-hint">انقر هنا لتحرير النص</div>
@@ -441,6 +474,18 @@ export default function Home() {
                     </div>
                   ) : null}
                 </div>
+                {(axisLoading || variableAxes.length > 0) && (
+                  <div className="variable-axis-panel">
+                    <div className="variable-axis-heading"><span>محاور الخط المتغيّر</span><small>{axisLoading ? "جاري التحليل…" : `${variableAxes.length} محاور`}</small></div>
+                    {variableAxes.map((axis) => (
+                      <label className="variable-axis" key={axis.tag}>
+                        <span><b>{axis.tag}</b><em>{axis.tag === "wght" ? "الوزن" : axis.tag === "wdth" ? "العرض" : axis.tag === "slnt" ? "الميل" : axis.name}</em><strong>{axisValues[axis.tag] ?? axis.default}</strong></span>
+                        <input type="range" min={axis.min} max={axis.max} step={(axis.max - axis.min) / 100 || 1} value={axisValues[axis.tag] ?? axis.default} onChange={(event) => setAxisValues((current) => ({ ...current, [axis.tag]: Number(event.target.value) }))} />
+                        <small>{axis.min} — {axis.max}</small>
+                      </label>
+                    ))}
+                  </div>
+                )}
                 <label className="slider-control">
                   <span>حجم الحرف <b>{fontSize}px</b></span>
                   <input type="range" min="34" max="96" value={fontSize} onChange={(event) => setFontSize(Number(event.target.value))} />

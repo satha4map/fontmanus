@@ -246,6 +246,16 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, select:focus-visi
 .font-download-control button:active:not(:disabled) { transform: scale(.97); }
 .font-download-control button:disabled { cursor: not-allowed; opacity: .45; }
 .font-download-control small { color: #8f7c6b; font-size: 8px; }
+.variable-axis-panel { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 16px; padding: 11px 12px; border: 1px solid #dce8df; border-radius: 10px; background: #f4f8f1; }
+.variable-axis-heading { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; color: #35635e; font-size: 10px; font-weight: 600; }
+.variable-axis-heading small { color: #7f9b91; font-family: "DM Mono", monospace; font-size: 8px; font-weight: 400; }
+.variable-axis { display: flex; flex-direction: column; gap: 4px; color: #60716c; font-size: 9px; }
+.variable-axis > span { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
+.variable-axis b { color: #267875; font-family: "DM Mono", monospace; font-size: 9px; direction: ltr; }
+.variable-axis em { margin-left: auto; font-style: normal; }
+.variable-axis strong { color: #a36339; font-family: "DM Mono", monospace; font-size: 9px; font-weight: 500; direction: ltr; }
+.variable-axis input[type="range"] { height: 13px; }
+.variable-axis > small { color: #9a9e91; font-family: "DM Mono", monospace; font-size: 7px; direction: ltr; text-align: left; }
 .export-progress { margin-top: 2px; animation: progress-in .2s var(--ease-out, ease); }
 .export-progress-top { display: flex; align-items: center; justify-content: space-between; gap: 5px; color: #5f7771; font-size: 8px; }
 .export-progress-top span { display: inline-flex; align-items: center; gap: 4px; min-width: 0; white-space: nowrap; }
