@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
-import { useTheme } from "@/contexts/ThemeContext";
+import { useTheme, type ColorTheme } from "@/contexts/ThemeContext";
 import {
   ArrowUpLeft,
   Check,
@@ -15,6 +15,7 @@ import {
   LoaderCircle,
   Menu,
   Moon,
+  Palette,
   Plus,
   RotateCcw,
   Settings2,
@@ -123,8 +124,16 @@ const stylisticSets = [
   { code: "cswh", label: "وصلات" },
 ];
 
+const colorThemes: Array<{ id: ColorTheme; label: string; swatch: string }> = [
+  { id: "sand", label: "رملي", swatch: "#b46c3f" },
+  { id: "ocean", label: "محيطي", swatch: "#32859a" },
+  { id: "forest", label: "غابي", swatch: "#4d8b72" },
+  { id: "plum", label: "برقوقي", swatch: "#9a648b" },
+  { id: "sunset", label: "غروب", swatch: "#d47b58" },
+];
+
 export default function Home() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, colorTheme, setColorTheme } = useTheme();
   const [activeFeatures, setActiveFeatures] = useState<string[]>(["liga", "rlig", "calt"]);
   const [selectedFeature, setSelectedFeature] = useState("liga");
   const [fontIndex, setFontIndex] = useState(0);
@@ -142,6 +151,7 @@ export default function Home() {
   const [text, setText] = useState(samplePresets[0]);
   const [copied, setCopied] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const fontInputRef = useRef<HTMLInputElement>(null);
 
   const selected = features.find((feature) => feature.code === selectedFeature) ?? features[0];
@@ -361,6 +371,10 @@ export default function Home() {
           <div className="workspace-top-actions">
             <a className="telegram-top-button" href="https://t.me/royalvoiceowner" target="_blank" rel="noreferrer"><Send size={15} /> تواصل عبر تيليجرام</a>
             <button className="theme-toggle" type="button" onClick={() => toggleTheme?.()} aria-label={theme === "dark" ? "تفعيل الوضع النهاري" : "تفعيل الوضع الليلي"} title={theme === "dark" ? "الوضع النهاري" : "الوضع الليلي"}>{theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}<span>{theme === "dark" ? "نهاري" : "ليلي"}</span></button>
+            <div className="palette-picker">
+              <button className="palette-toggle" type="button" onClick={() => setPaletteOpen((open) => !open)} aria-expanded={paletteOpen} aria-label="اختيار السمة اللونية"><Palette size={15} /><span>ألوان</span><i style={{ background: colorThemes.find((item) => item.id === colorTheme)?.swatch }} /></button>
+              {paletteOpen && <div className="palette-menu">{colorThemes.map((item) => <button key={item.id} className={colorTheme === item.id ? "selected" : ""} onClick={() => { setColorTheme(item.id); setPaletteOpen(false); }}><i style={{ background: item.swatch }} /><span>{item.label}</span>{colorTheme === item.id && <Check size={12} />}</button>)}</div>}
+            </div>
             <button className="utility-button workspace-reset" onClick={resetWorkspace}><RotateCcw size={15} /> إعادة ضبط</button>
           </div>
         </div>
@@ -368,6 +382,10 @@ export default function Home() {
           <button className="workspace-menu-button" onClick={() => setMenuOpen(true)} aria-label="فتح القائمة"><Menu size={18} /> القائمة</button>
           <a className="telegram-mobile-button" href="https://t.me/royalvoiceowner" target="_blank" rel="noreferrer"><Send size={14} /> تيليجرام</a>
           <button className="theme-toggle theme-toggle-mobile" type="button" onClick={() => toggleTheme?.()} aria-label={theme === "dark" ? "تفعيل الوضع النهاري" : "تفعيل الوضع الليلي"}>{theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}<span>{theme === "dark" ? "نهاري" : "ليلي"}</span></button>
+          <div className="palette-picker palette-picker-mobile">
+            <button className="palette-toggle" type="button" onClick={() => setPaletteOpen((open) => !open)} aria-expanded={paletteOpen} aria-label="اختيار السمة اللونية"><Palette size={14} /><i style={{ background: colorThemes.find((item) => item.id === colorTheme)?.swatch }} /></button>
+            {paletteOpen && <div className="palette-menu">{colorThemes.map((item) => <button key={item.id} className={colorTheme === item.id ? "selected" : ""} onClick={() => { setColorTheme(item.id); setPaletteOpen(false); }}><i style={{ background: item.swatch }} /><span>{item.label}</span>{colorTheme === item.id && <Check size={12} />}</button>)}</div>}
+          </div>
         </div>
 
         <section className="content-grid">

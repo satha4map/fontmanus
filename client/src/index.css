@@ -172,6 +172,17 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, select:focus-visi
 .theme-toggle:hover { color: #185c5d; background: #edf2ed; }
 .theme-toggle:active { transform: scale(.97); }
 .theme-toggle svg { color: #a9683e; }
+.palette-picker { position: relative; }
+.palette-toggle { display: inline-flex; align-items: center; gap: 5px; padding: 7px 8px; border: 1px solid #ddd2c5; border-radius: 8px; color: #586866; background: #fffaf2; font-size: 10px; transition: background .16s ease, transform .16s ease; }
+.palette-toggle:hover { background: #edf2ed; }
+.palette-toggle:active { transform: scale(.97); }
+.palette-toggle > i, .palette-menu i { display: inline-block; flex: 0 0 auto; width: 10px; height: 10px; border: 2px solid rgba(255,255,255,.8); border-radius: 50%; box-shadow: 0 0 0 1px rgba(53,67,64,.18); }
+.palette-menu { position: absolute; top: calc(100% + 8px); right: 0; z-index: 50; display: grid; gap: 3px; min-width: 116px; padding: 6px; border: 1px solid #ded4c7; border-radius: 11px; background: #fffdf8; box-shadow: 0 12px 28px rgba(57,47,35,.16); animation: palette-in .16s var(--ease-out, ease); }
+.palette-menu button { display: flex; align-items: center; gap: 7px; width: 100%; padding: 7px 8px; border-radius: 7px; color: #596967; background: transparent; font-size: 10px; text-align: right; }
+.palette-menu button:hover, .palette-menu button.selected { color: #185c5d; background: #edf3ee; }
+.palette-menu button svg { margin-right: auto; }
+.palette-menu button.selected svg { color: #4f947b; }
+.palette-picker-mobile { display: none; }
 .workspace-reset { padding: 7px 9px; font-size: 10px; }
 .workspace-menu-button { display: none; }
 .mobile-workspace-actions { display: none; }
@@ -284,6 +295,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, select:focus-visi
 @keyframes progress-in { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes progress-shimmer { from { transform: translateX(-120%); } to { transform: translateX(320%); } }
 @keyframes spin { to { transform: rotate(360deg); } }
+@keyframes palette-in { from { opacity: 0; transform: translateY(-4px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .export-note { display: flex; align-items: flex-start; gap: 6px; margin-top: 15px; padding: 8px 10px; border-radius: 8px; color: #8a775f; background: #faf1e4; font-size: 9px; line-height: 1.6; }
 .export-note svg { flex: 0 0 auto; margin-top: 2px; color: #b4774f; }
 .export-note.has-error { color: #934c43; background: #f9e7e2; }
@@ -337,11 +349,13 @@ input[type="range"]::-moz-range-thumb { width: 11px; height: 11px; border: 2px s
   .workspace-topbar { min-height: 48px; padding: 0 16px; }
   .workspace-title { font-size: 16px; }
   .workspace-title small, .workspace-reset { display: none; }
-  .workspace-top-actions .telegram-top-button, .workspace-top-actions .theme-toggle { display: none; }
+  .workspace-top-actions .telegram-top-button, .workspace-top-actions .theme-toggle, .workspace-top-actions .palette-picker { display: none; }
   .mobile-workspace-actions { position: sticky; top: 12px; z-index: 10; display: flex; align-items: center; gap: 8px; margin: 12px 16px 0 auto; direction: rtl; }
   .workspace-menu-button { display: inline-flex; align-items: center; gap: 6px; padding: 8px 11px; border: 1px solid #ddd2c5; border-radius: 9px; color: #536361; background: rgba(255,253,248,.94); box-shadow: 0 5px 15px rgba(83,66,46,.08); font-size: 10px; }
   .telegram-mobile-button { padding: 8px 10px; font-size: 9px; }
   .theme-toggle-mobile { padding: 8px 9px; font-size: 9px; }
+  .palette-picker-mobile { display: block; }
+  .palette-picker-mobile .palette-toggle { padding: 8px 9px; }
   .menu-button { place-items: center; padding: 8px; }
   .topbar-actions .utility-button { display: none; }
   .telegram-top-button { padding: 6px 8px; font-size: 9px; }
@@ -393,6 +407,11 @@ input[type="range"]::-moz-range-thumb { width: 11px; height: 11px; border: 2px s
 .dark .workspace-title small { color: #d09a6c; }
 .dark .theme-toggle { border-color: #3b4e4e; color: #cbd8d3; background: #1b2a2c; }
 .dark .theme-toggle:hover { color: #f0d0a6; background: #263b3d; }
+.dark .palette-toggle { border-color: #3b4e4e; color: #cbd8d3; background: #1b2a2c; }
+.dark .palette-toggle:hover { background: #263b3d; }
+.dark .palette-menu { border-color: #3b5050; background: #1b2a2c; box-shadow: 0 12px 28px rgba(0,0,0,.32); }
+.dark .palette-menu button { color: #c1d0ca; }
+.dark .palette-menu button:hover, .dark .palette-menu button.selected { color: #b9e0d5; background: #294241; }
 .dark .telegram-top-button, .dark .telegram-mobile-button { border-color: rgba(116,197,207,.32); color: #a9e0e2; background: #173639; }
 .dark .telegram-top-button:hover, .dark .telegram-mobile-button:hover { background: #21484b; }
 .dark .utility-button { color: #b5c3bf; }
@@ -440,3 +459,31 @@ input[type="range"]::-moz-range-thumb { width: 11px; height: 11px; border: 2px s
 .dark .guide-cards h3 { color: #d8e5df; }
 .dark .guide-cards p, .dark .page-footer { color: #93a69f; }
 .dark .page-footer a { color: #d2a176; }
+html[data-color-theme="ocean"] .app-shell { background: #eef6f5; }
+html[data-color-theme="ocean"] .workspace-title { color: #2b6470; }
+html[data-color-theme="ocean"] .feature-switch.on { background: #2f8492; }
+html[data-color-theme="ocean"] .style-chip.active, html[data-color-theme="ocean"] .font-download-control button { color: #216d7c; border-color: #75aeba; }
+html[data-color-theme="ocean"] .style-chip.active { background: #e0f0f1; box-shadow: inset 0 -2px 0 #398898; }
+html[data-color-theme="ocean"] .telegram-top-button, html[data-color-theme="ocean"] .telegram-mobile-button { color: #216d7c; background: #e0f0f1; }
+html[data-color-theme="forest"] .app-shell { background: #eef5ef; }
+html[data-color-theme="forest"] .workspace-title { color: #386750; }
+html[data-color-theme="forest"] .feature-switch.on { background: #4d8b72; }
+html[data-color-theme="forest"] .style-chip.active, html[data-color-theme="forest"] .font-download-control button { color: #39755e; border-color: #83b09a; }
+html[data-color-theme="forest"] .style-chip.active { background: #e2f0e5; box-shadow: inset 0 -2px 0 #4d8b72; }
+html[data-color-theme="forest"] .telegram-top-button, html[data-color-theme="forest"] .telegram-mobile-button { color: #39755e; background: #e4f1e7; }
+html[data-color-theme="plum"] .app-shell { background: #f7f0f6; }
+html[data-color-theme="plum"] .workspace-title { color: #744d70; }
+html[data-color-theme="plum"] .feature-switch.on { background: #9a648b; }
+html[data-color-theme="plum"] .style-chip.active, html[data-color-theme="plum"] .font-download-control button { color: #814f77; border-color: #be91b3; }
+html[data-color-theme="plum"] .style-chip.active { background: #f0e4ef; box-shadow: inset 0 -2px 0 #9a648b; }
+html[data-color-theme="plum"] .telegram-top-button, html[data-color-theme="plum"] .telegram-mobile-button { color: #814f77; background: #f1e5f0; }
+html[data-color-theme="sunset"] .app-shell { background: #fff2e9; }
+html[data-color-theme="sunset"] .workspace-title { color: #9a5b43; }
+html[data-color-theme="sunset"] .feature-switch.on { background: #d47b58; }
+html[data-color-theme="sunset"] .style-chip.active, html[data-color-theme="sunset"] .font-download-control button { color: #a65e45; border-color: #dba189; }
+html[data-color-theme="sunset"] .style-chip.active { background: #fbe9df; box-shadow: inset 0 -2px 0 #d47b58; }
+html[data-color-theme="sunset"] .telegram-top-button, html[data-color-theme="sunset"] .telegram-mobile-button { color: #a65e45; background: #fbe8dd; }
+.dark[data-color-theme="ocean"] .app-shell { background: #122326; }
+.dark[data-color-theme="forest"] .app-shell { background: #14231e; }
+.dark[data-color-theme="plum"] .app-shell { background: #241a25; }
+.dark[data-color-theme="sunset"] .app-shell { background: #261c19; }

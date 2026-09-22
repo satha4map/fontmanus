@@ -1,11 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 type Theme = "light" | "dark";
+export type ColorTheme = "sand" | "ocean" | "forest" | "plum" | "sunset";
 
 interface ThemeContextType {
   theme: Theme;
   toggleTheme?: () => void;
   switchable: boolean;
+  colorTheme: ColorTheme;
+  setColorTheme: (theme: ColorTheme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -28,6 +31,10 @@ export function ThemeProvider({
     }
     return defaultTheme;
   });
+  const [colorTheme, setColorTheme] = useState<ColorTheme>(() => {
+    const stored = localStorage.getItem("color-theme") as ColorTheme | null;
+    return stored || "sand";
+  });
 
   useEffect(() => {
     const root = document.documentElement;
@@ -42,6 +49,11 @@ export function ThemeProvider({
     }
   }, [theme, switchable]);
 
+  useEffect(() => {
+    document.documentElement.dataset.colorTheme = colorTheme;
+    localStorage.setItem("color-theme", colorTheme);
+  }, [colorTheme]);
+
   const toggleTheme = switchable
     ? () => {
         setTheme(prev => (prev === "light" ? "dark" : "light"));
@@ -49,7 +61,7 @@ export function ThemeProvider({
     : undefined;
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, switchable }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, switchable, colorTheme, setColorTheme }}>
       {children}
     </ThemeContext.Provider>
   );
