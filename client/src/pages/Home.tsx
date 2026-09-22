@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import {
   ArrowUpLeft,
   Check,
@@ -105,18 +105,38 @@ const samplePresets = [
   "الخط الجيد يجعل القراءة فكرةً لا عائقاً.",
 ];
 
+const stylisticSets = [
+  { code: "ss01", label: "أسلوب 01" },
+  { code: "ss02", label: "أسلوب 02" },
+  { code: "ss03", label: "أسلوب 03" },
+  { code: "ss04", label: "أسلوب 04" },
+  { code: "salt", label: "بدائل" },
+];
+
 export default function Home() {
   const [activeFeatures, setActiveFeatures] = useState<string[]>(["liga", "rlig", "calt"]);
   const [selectedFeature, setSelectedFeature] = useState("liga");
   const [fontIndex, setFontIndex] = useState(0);
+  const [uploadedFont, setUploadedFont] = useState<{ name: string; url: string; family: string } | null>(null);
   const [fontSize, setFontSize] = useState(64);
   const [lineHeight, setLineHeight] = useState(1.45);
   const [text, setText] = useState(samplePresets[0]);
   const [copied, setCopied] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const fontInputRef = useRef<HTMLInputElement>(null);
 
   const selected = features.find((feature) => feature.code === selectedFeature) ?? features[0];
-  const chosenFont = fontOptions[fontIndex];
+  const availableFonts = uploadedFont ? [...fontOptions, { ...uploadedFont, className: "font-uploaded" }] : fontOptions;
+  const chosenFont = availableFonts[fontIndex] ?? availableFonts[0];
+
+  useEffect(() => {
+    if (!uploadedFont) return;
+    const style = document.createElement("style");
+    style.dataset.uploadedFont = "true";
+    style.textContent = `@font-face { font-family: "${uploadedFont.family}"; src: url("${uploadedFont.url}"); font-display: swap; }`;
+    document.head.appendChild(style);
+    return () => style.remove();
+  }, [uploadedFont]);
 
   const featureSettings = useMemo(
     () => activeFeatures.map((code) => `"${code}" 1`).join(", ") || "normal",
@@ -133,6 +153,22 @@ export default function Home() {
     setActiveFeatures((current) =>
       current.includes(code) ? current.filter((item) => item !== code) : [...current, code],
     );
+  }
+
+  function toggleStyle(code: string) {
+    setSelectedFeature(code);
+    setActiveFeatures((current) =>
+      current.includes(code) ? current.filter((item) => item !== code) : [...current, code],
+    );
+  }
+
+  function handleFontUpload(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const family = `UploadedFont_${file.name.replace(/[^a-zA-Z0-9]/g, "_")}`;
+    const url = URL.createObjectURL(file);
+    setUploadedFont({ name: file.name.replace(/\.(woff2?|ttf|otf)$/i, ""), url, family });
+    setFontIndex(fontOptions.length);
   }
 
   async function copyCSS() {
@@ -298,6 +334,19 @@ export default function Home() {
                   <button key={preset} className={text === preset ? "chosen" : ""} onClick={() => setText(preset)}>{preset.slice(0, 14)}…</button>
                 ))}
               </div>
+              <div className="style-strip" aria-label="مجموعات الأساليب">
+                <div className="style-strip-heading"><Sparkles size={14} /><span>مجموعات الأساليب</span><small>Stylistic sets</small></div>
+                <div className="style-chips">
+                  {stylisticSets.map((style) => {
+                    const isActive = activeFeatures.includes(style.code);
+                    return (
+                      <button key={style.code} className={`style-chip ${isActive ? "active" : ""}`} onClick={() => toggleStyle(style.code)} aria-pressed={isActive}>
+                        <span>{style.label}</span><code>{style.code}</code>{isActive && <Check size={12} />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </section>
 
             <section className="adjustment-panel">
@@ -307,11 +356,17 @@ export default function Home() {
                   <span>عائلة الخط</span>
                   <div className="select-wrap">
                     <select value={fontIndex} onChange={(event) => setFontIndex(Number(event.target.value))}>
-                      {fontOptions.map((font, index) => <option value={index} key={font.name}>{font.name}</option>)}
+                      {availableFonts.map((font, index) => <option value={index} key={font.name}>{font.name}</option>)}
                     </select>
                     <ChevronDown size={16} />
                   </div>
                 </label>
+                <div className="font-upload-control">
+                  <span>استيراد من الجهاز</span>
+                  <input ref={fontInputRef} type="file" accept=".woff,.woff2,.ttf,.otf,font/woff,font/woff2,font/ttf,font/otf" onChange={handleFontUpload} hidden />
+                  <button type="button" onClick={() => fontInputRef.current?.click()}><Plus size={14} /> {uploadedFont ? "استبدال الخط" : "رفع خط"}</button>
+                  {uploadedFont && <small title={uploadedFont.name}>{uploadedFont.name}</small>}
+                </div>
                 <label className="slider-control">
                   <span>حجم الحرف <b>{fontSize}px</b></span>
                   <input type="range" min="34" max="96" value={fontSize} onChange={(event) => setFontSize(Number(event.target.value))} />

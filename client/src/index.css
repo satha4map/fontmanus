@@ -208,16 +208,32 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, select:focus-visi
 .quick-presets span { flex: 0 0 auto; margin-left: 2px; color: #8e978f; font-size: 10px; }
 .quick-presets button { flex: 0 0 auto; max-width: 165px; overflow: hidden; padding: 5px 9px; border: 1px solid #e5ddd1; border-radius: 7px; color: #5f6b69; background: #fff; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; transition: all .16s ease; }
 .quick-presets button:hover, .quick-presets button.chosen { border-color: #c69a71; color: #87502d; background: #fcf2e7; }
+.style-strip { display: flex; align-items: center; gap: 14px; padding: 10px 18px 12px; border-top: 1px solid #eee7dc; background: #fbf8f1; }
+.style-strip-heading { display: flex; align-items: center; gap: 5px; flex: 0 0 auto; color: #6d7773; font-size: 10px; font-weight: 600; }
+.style-strip-heading svg { color: #ae7048; }
+.style-strip-heading small { color: #aaa294; font-family: "DM Mono", monospace; font-size: 8px; font-weight: 400; direction: ltr; }
+.style-chips { display: flex; align-items: center; gap: 5px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.style-chip { display: inline-flex; align-items: center; gap: 5px; flex: 0 0 auto; min-height: 27px; padding: 4px 7px; border: 1px solid #e1d7ca; border-radius: 7px; color: #687471; background: #fffdf8; font-size: 9px; transition: all .16s ease; }
+.style-chip:hover { border-color: #c79a72; color: #87502d; background: #fff7ed; }
+.style-chip.active { border-color: #6d9991; color: #185c5d; background: #e7f0ea; box-shadow: inset 0 -2px 0 #357d78; }
+.style-chip code { color: #a18f7c; font-family: "DM Mono", monospace; font-size: 8px; direction: ltr; }
+.style-chip.active code { color: #4b817b; }
+.style-chip svg { color: #317a72; }
 .adjustment-panel { padding: 18px 20px 20px; }
 .adjustment-heading { display: flex; align-items: center; gap: 7px; margin-bottom: 17px; color: #455657; font-size: 12px; font-weight: 600; }
 .adjustment-heading svg { color: #aa6840; }
-.adjustment-grid { display: grid; grid-template-columns: 1.05fr 1fr 1fr; gap: 25px; }
+.adjustment-grid { display: grid; grid-template-columns: 1.1fr 1fr 1fr 1fr; gap: 18px; }
 .select-control, .slider-control { display: flex; flex-direction: column; gap: 8px; color: #657170; font-size: 10px; }
 .slider-control > span { display: flex; align-items: center; justify-content: space-between; }
 .slider-control b { color: #a36339; font-family: "DM Mono", monospace; font-weight: 500; direction: ltr; }
 .select-wrap { position: relative; }
 .select-wrap select { width: 100%; height: 33px; padding: 0 10px 0 29px; appearance: none; border: 1px solid #e0d6c9; border-radius: 8px; color: #445251; background: #fdfbf6; font-family: "DM Mono", monospace; font-size: 10px; direction: ltr; outline: none; }
 .select-wrap svg { position: absolute; top: 9px; left: 9px; color: #89918d; pointer-events: none; }
+.font-upload-control { display: flex; min-width: 0; flex-direction: column; gap: 7px; color: #657170; font-size: 10px; }
+.font-upload-control button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; height: 33px; padding: 0 9px; border: 1px dashed #c9986e; border-radius: 8px; color: #975d39; background: #fff8ef; font-size: 10px; transition: background .16s ease, transform .16s ease; }
+.font-upload-control button:hover { background: #fcebd9; }
+.font-upload-control button:active { transform: scale(.97); }
+.font-upload-control small { overflow: hidden; color: #8f7c6b; text-overflow: ellipsis; white-space: nowrap; direction: ltr; text-align: right; font-family: "DM Mono", monospace; font-size: 8px; }
 input[type="range"] { width: 100%; height: 16px; padding: 0; appearance: none; background: transparent; accent-color: #a9683e; }
 input[type="range"]::-webkit-slider-runnable-track { height: 4px; border-radius: 10px; background: linear-gradient(90deg, #b77448, #e5ddd2); }
 input[type="range"]::-webkit-slider-thumb { width: 14px; height: 14px; margin-top: -5px; appearance: none; border: 2px solid #fffdf8; border-radius: 50%; background: #a56339; box-shadow: 0 1px 4px rgba(85,52,33,.28); }
@@ -274,6 +290,8 @@ input[type="range"]::-moz-range-thumb { width: 11px; height: 11px; border: 2px s
   .content-grid { grid-template-columns: 1fr; padding: 24px 20px 10px; }
   .control-panel { order: 2; }
   .preview-stack { order: 1; }
+  .style-strip { align-items: flex-start; flex-direction: column; gap: 7px; }
+  .style-chips { width: 100%; }
   .guide-section { grid-template-columns: 1fr; gap: 22px; margin: 25px 20px 0; }
   .page-footer { margin: 0 20px; }
 }
