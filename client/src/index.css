@@ -168,6 +168,10 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, select:focus-visi
 .workspace-title small { margin-right: 7px; color: #a0704e; font-family: "DM Mono", monospace; font-size: 8px; font-weight: 400; letter-spacing: .08em; direction: ltr; }
 .workspace-top-actions { display: flex; align-items: center; gap: 8px; }
 .workspace-top-actions .telegram-top-button { padding: 7px 11px; }
+.theme-toggle { display: inline-flex; align-items: center; gap: 5px; padding: 7px 9px; border: 1px solid #ddd2c5; border-radius: 8px; color: #586866; background: #fffaf2; font-size: 10px; transition: background .16s ease, color .16s ease, transform .16s ease; }
+.theme-toggle:hover { color: #185c5d; background: #edf2ed; }
+.theme-toggle:active { transform: scale(.97); }
+.theme-toggle svg { color: #a9683e; }
 .workspace-reset { padding: 7px 9px; font-size: 10px; }
 .workspace-menu-button { display: none; }
 .mobile-workspace-actions { display: none; }
@@ -333,10 +337,11 @@ input[type="range"]::-moz-range-thumb { width: 11px; height: 11px; border: 2px s
   .workspace-topbar { min-height: 48px; padding: 0 16px; }
   .workspace-title { font-size: 16px; }
   .workspace-title small, .workspace-reset { display: none; }
-  .workspace-top-actions .telegram-top-button { display: none; }
+  .workspace-top-actions .telegram-top-button, .workspace-top-actions .theme-toggle { display: none; }
   .mobile-workspace-actions { position: sticky; top: 12px; z-index: 10; display: flex; align-items: center; gap: 8px; margin: 12px 16px 0 auto; direction: rtl; }
   .workspace-menu-button { display: inline-flex; align-items: center; gap: 6px; padding: 8px 11px; border: 1px solid #ddd2c5; border-radius: 9px; color: #536361; background: rgba(255,253,248,.94); box-shadow: 0 5px 15px rgba(83,66,46,.08); font-size: 10px; }
   .telegram-mobile-button { padding: 8px 10px; font-size: 9px; }
+  .theme-toggle-mobile { padding: 8px 9px; font-size: 9px; }
   .menu-button { place-items: center; padding: 8px; }
   .topbar-actions .utility-button { display: none; }
   .telegram-top-button { padding: 6px 8px; font-size: 9px; }
@@ -381,3 +386,57 @@ input[type="range"]::-moz-range-thumb { width: 11px; height: 11px; border: 2px s
   .code-panel { animation: rise-in .55s .2s var(--ease-out, ease) both; }
 }
 @keyframes rise-in { from { opacity: 0; transform: translateY(13px); } to { opacity: 1; transform: translateY(0); } }
+
+.dark body, .dark .app-shell { background: #111b1d; color: #e3ebe7; }
+.dark .workspace-topbar { border-color: rgba(224,235,230,.1); background: rgba(17,27,29,.88); }
+.dark .workspace-title { color: #e2ebe6; }
+.dark .workspace-title small { color: #d09a6c; }
+.dark .theme-toggle { border-color: #3b4e4e; color: #cbd8d3; background: #1b2a2c; }
+.dark .theme-toggle:hover { color: #f0d0a6; background: #263b3d; }
+.dark .telegram-top-button, .dark .telegram-mobile-button { border-color: rgba(116,197,207,.32); color: #a9e0e2; background: #173639; }
+.dark .telegram-top-button:hover, .dark .telegram-mobile-button:hover { background: #21484b; }
+.dark .utility-button { color: #b5c3bf; }
+.dark .utility-button:hover { background: #263739; }
+.dark .control-panel, .dark .preview-panel, .dark .adjustment-panel, .dark .code-panel { border-color: #2e4243; background: #1a292b; box-shadow: 0 14px 31px rgba(0,0,0,.18); }
+.dark .panel-heading, .dark .preview-header, .dark .quick-presets, .dark .style-strip { border-color: #2b3e40; }
+.dark .panel-heading h2, .dark .guide-section h2 { color: #e4ebe7; }
+.dark .panel-eyebrow { color: #d39b6b; }
+.dark .round-action { border-color: #405353; color: #e0ae7c; background: #203234; }
+.dark .round-action:hover { background: #2b4142; }
+.dark .feature-group + .feature-group { border-color: #304445; }
+.dark .feature-group-label, .dark .feature-code { color: #9bada6; }
+.dark .feature-row { color: #c1cfca; }
+.dark .feature-row:hover, .dark .feature-row.is-selected { background: #243638; }
+.dark .feature-label { color: #d3dfda; }
+.dark .feature-label i { color: #e1b58a; background: #49382e; }
+.dark .feature-note { color: #c0d3cb; background: #203735; }
+.dark .feature-note strong { color: #d8e9e0; }
+.dark .feature-note span { color: #92aba2; }
+.dark .note-icon { color: #8bd0c0; background: #2b4c46; }
+.dark .preview-title, .dark .adjustment-heading { color: #d6e2dd; }
+.dark .preview-status, .dark .select-control, .dark .slider-control, .dark .font-upload-control, .dark .font-download-control { color: #9eb1aa; }
+.dark .editor-stage { background: #142426; }
+.dark .stage-grid { background-image: linear-gradient(rgba(144,184,176,.09) 1px, transparent 1px), linear-gradient(90deg, rgba(144,184,176,.09) 1px, transparent 1px); }
+.dark .type-meta, .dark .stage-hint { color: #829995; }
+.dark .preview-text { color: #e0ece7; }
+.dark .quick-presets button, .dark .style-chip { border-color: #3b5050; color: #b7c8c1; background: #203133; }
+.dark .quick-presets button:hover, .dark .quick-presets button.chosen, .dark .style-chip:hover { color: #f0c092; background: #3a3029; }
+.dark .style-strip { background: #172627; }
+.dark .style-strip-heading { color: #b7c8c1; }
+.dark .style-chip.active { color: #a9e2d4; background: #214541; border-color: #4b8d82; }
+.dark .style-chip code { color: #94a9a1; }
+.dark .select-wrap select { border-color: #3b4f4f; color: #c9d6d1; background: #1b2b2d; }
+.dark .font-upload-control button { border-color: #ae7b55; color: #e0b48a; background: #302820; }
+.dark .font-upload-control button:hover { background: #443528; }
+.dark .font-download-control button { border-color: #568e83; color: #a9e0d1; background: #1d403d; }
+.dark .font-download-control button:hover:not(:disabled) { background: #27564f; }
+.dark .variable-axis-panel { border-color: #31564f; background: #1c3532; }
+.dark .variable-axis-heading, .dark .variable-axis b { color: #a7ded0; }
+.dark .variable-axis, .dark .variable-axis > small { color: #abc0b8; }
+.dark .export-note { color: #cdb79a; background: #352d26; }
+.dark .export-progress-track { background: #2c4945; }
+.dark .guide-section { border-color: #304244; }
+.dark .guide-cards article { border-color: #304244; background: rgba(27,42,44,.72); }
+.dark .guide-cards h3 { color: #d8e5df; }
+.dark .guide-cards p, .dark .page-footer { color: #93a69f; }
+.dark .page-footer a { color: #d2a176; }

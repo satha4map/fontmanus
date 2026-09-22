@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   ArrowUpLeft,
   Check,
@@ -13,11 +14,13 @@ import {
   LayoutDashboard,
   LoaderCircle,
   Menu,
+  Moon,
   Plus,
   RotateCcw,
   Settings2,
   Send,
   Sparkles,
+  Sun,
   Type,
   WandSparkles,
   X,
@@ -121,6 +124,7 @@ const stylisticSets = [
 ];
 
 export default function Home() {
+  const { theme, toggleTheme } = useTheme();
   const [activeFeatures, setActiveFeatures] = useState<string[]>(["liga", "rlig", "calt"]);
   const [selectedFeature, setSelectedFeature] = useState("liga");
   const [fontIndex, setFontIndex] = useState(0);
@@ -356,12 +360,14 @@ export default function Home() {
           <span className="workspace-title">مختبر أحمد النهر <small>OpenType</small></span>
           <div className="workspace-top-actions">
             <a className="telegram-top-button" href="https://t.me/royalvoiceowner" target="_blank" rel="noreferrer"><Send size={15} /> تواصل عبر تيليجرام</a>
+            <button className="theme-toggle" type="button" onClick={() => toggleTheme?.()} aria-label={theme === "dark" ? "تفعيل الوضع النهاري" : "تفعيل الوضع الليلي"} title={theme === "dark" ? "الوضع النهاري" : "الوضع الليلي"}>{theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}<span>{theme === "dark" ? "نهاري" : "ليلي"}</span></button>
             <button className="utility-button workspace-reset" onClick={resetWorkspace}><RotateCcw size={15} /> إعادة ضبط</button>
           </div>
         </div>
         <div className="mobile-workspace-actions">
           <button className="workspace-menu-button" onClick={() => setMenuOpen(true)} aria-label="فتح القائمة"><Menu size={18} /> القائمة</button>
           <a className="telegram-mobile-button" href="https://t.me/royalvoiceowner" target="_blank" rel="noreferrer"><Send size={14} /> تيليجرام</a>
+          <button className="theme-toggle theme-toggle-mobile" type="button" onClick={() => toggleTheme?.()} aria-label={theme === "dark" ? "تفعيل الوضع النهاري" : "تفعيل الوضع الليلي"}>{theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}<span>{theme === "dark" ? "نهاري" : "ليلي"}</span></button>
         </div>
 
         <section className="content-grid">
