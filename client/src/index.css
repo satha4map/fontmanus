@@ -125,20 +125,20 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, select:focus-visi
 .sidebar-footer p { margin: 0; color: #91a09e; font-size: 10px; line-height: 1.6; }
 
 .workspace { min-height: 100vh; margin-left: 260px; }
-.topbar { height: 78px; display: flex; align-items: center; justify-content: space-between; padding: 0 52px; border-bottom: 1px solid rgba(46,56,55,.09); background: rgba(247,243,234,.88); backdrop-filter: blur(16px); }
+.topbar { position: sticky; top: 0; z-index: 20; height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; border-bottom: 1px solid rgba(46,56,55,.1); background: rgba(247,243,234,.94); box-shadow: 0 5px 18px rgba(61,51,38,.045); backdrop-filter: blur(16px); }
 .crumbs { display: flex; align-items: center; gap: 10px; color: #7a817f; font-size: 12px; }
 .crumbs strong { color: #304143; font-size: 13px; }
 .crumb-separator { color: #b4aaa0; }
-.topbar-actions { display: flex; align-items: center; gap: 12px; direction: rtl; }
-.telegram-top-button { display: inline-flex; align-items: center; gap: 6px; padding: 8px 11px; border: 1px solid rgba(49, 130, 147, .24); border-radius: 8px; color: #267485; background: #edf7f5; text-decoration: none; font-size: 11px; transition: background .16s ease, transform .16s ease; }
+.topbar-actions { display: flex; align-items: center; gap: 8px; direction: rtl; }
+.telegram-top-button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid rgba(49, 130, 147, .24); border-radius: 8px; color: #267485; background: #edf7f5; text-decoration: none; font-size: 10px; transition: background .16s ease, transform .16s ease; }
 .telegram-top-button:hover { background: #dff0ee; }
 .telegram-top-button:active { transform: scale(.97); }
 .utility-button { display: inline-flex; align-items: center; gap: 7px; padding: 10px 12px; border-radius: 9px; color: #516061; background: transparent; font-size: 12px; transition: background .18s ease, transform .16s ease; }
 .utility-button:hover { background: #ede5d8; }
 .utility-button:active, .help-button:active { transform: scale(.97); }
-.help-button { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: #667370; background: #ede7dc; transition: background .18s ease, transform .16s ease; }
+.help-button { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; color: #667370; background: #ede7dc; transition: background .18s ease, transform .16s ease; }
 .help-button:hover { background: #e4dbcd; }
-.avatar { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: #fffaf2; font-size: 12px; font-weight: 700; background: #b46c3f; box-shadow: 0 4px 11px rgba(128,67,35,.25); }
+.avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; color: #fffaf2; font-size: 11px; font-weight: 700; background: #b46c3f; box-shadow: 0 4px 11px rgba(128,67,35,.25); }
 .menu-button { display: none; color: #243334; background: none; }
 
 .hero { position: relative; isolation: isolate; min-height: 284px; display: flex; align-items: end; gap: 45px; padding: 44px 52px 39px; overflow: hidden; color: #f9f5eb; background: #244548; background-image: linear-gradient(116deg, #244548 0%, #315b59 56%, #284548 100%); }
@@ -239,6 +239,14 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, select:focus-visi
 .font-upload-control button:hover { background: #fcebd9; }
 .font-upload-control button:active { transform: scale(.97); }
 .font-upload-control small { overflow: hidden; color: #8f7c6b; text-overflow: ellipsis; white-space: nowrap; direction: ltr; text-align: right; font-family: "DM Mono", monospace; font-size: 8px; }
+.font-download-control { display: flex; min-width: 0; flex-direction: column; gap: 7px; color: #657170; font-size: 10px; }
+.font-download-control button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; height: 33px; padding: 0 9px; border: 1px solid #7b9e95; border-radius: 8px; color: #185c5d; background: #e9f1eb; font-size: 10px; transition: background .16s ease, transform .16s ease, opacity .16s ease; }
+.font-download-control button:hover:not(:disabled) { background: #dbeae1; }
+.font-download-control button:active:not(:disabled) { transform: scale(.97); }
+.font-download-control button:disabled { cursor: not-allowed; opacity: .45; }
+.font-download-control small { color: #8f7c6b; font-size: 8px; }
+.export-note { display: flex; align-items: flex-start; gap: 6px; margin-top: 15px; padding: 8px 10px; border-radius: 8px; color: #8a775f; background: #faf1e4; font-size: 9px; line-height: 1.6; }
+.export-note svg { flex: 0 0 auto; margin-top: 2px; color: #b4774f; }
 input[type="range"] { width: 100%; height: 16px; padding: 0; appearance: none; background: transparent; accent-color: #a9683e; }
 input[type="range"]::-webkit-slider-runnable-track { height: 4px; border-radius: 10px; background: linear-gradient(90deg, #b77448, #e5ddd2); }
 input[type="range"]::-webkit-slider-thumb { width: 14px; height: 14px; margin-top: -5px; appearance: none; border: 2px solid #fffdf8; border-radius: 50%; background: #a56339; box-shadow: 0 1px 4px rgba(85,52,33,.28); }
@@ -271,7 +279,7 @@ input[type="range"]::-moz-range-thumb { width: 11px; height: 11px; border: 2px s
 @media (max-width: 1080px) {
   .sidebar { width: 226px; }
   .workspace { margin-left: 226px; }
-  .topbar, .hero, .content-grid { padding-right: 30px; padding-left: 30px; }
+  .topbar, .hero, .content-grid { padding-right: 24px; padding-left: 24px; }
   .guide-section, .page-footer { margin-right: 30px; margin-left: 30px; }
   .content-grid { grid-template-columns: 290px minmax(0, 1fr); gap: 20px; }
   .adjustment-grid { gap: 15px; }
@@ -284,10 +292,10 @@ input[type="range"]::-moz-range-thumb { width: 11px; height: 11px; border: 2px s
   .sidebar-open { transform: translateX(0); }
   .mobile-close, .menu-button { display: grid; }
   .workspace { margin-left: 0; }
-  .topbar { height: 64px; padding: 0 20px; }
+  .topbar { height: 54px; padding: 0 16px; }
   .menu-button { place-items: center; padding: 8px; }
   .topbar-actions .utility-button { display: none; }
-  .telegram-top-button { padding: 7px 9px; font-size: 10px; }
+  .telegram-top-button { padding: 6px 8px; font-size: 9px; }
   .hero { min-height: 310px; padding: 36px 25px 31px; }
   .hero-copy { width: 75%; }
   .hero-copy p { font-size: 12px; }

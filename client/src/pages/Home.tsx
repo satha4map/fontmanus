@@ -6,6 +6,7 @@ import {
   CircleHelp,
   Code2,
   Copy,
+  Download,
   Eye,
   Grid2X2,
   Info,
@@ -121,6 +122,7 @@ export default function Home() {
   const [selectedFeature, setSelectedFeature] = useState("liga");
   const [fontIndex, setFontIndex] = useState(0);
   const [uploadedFont, setUploadedFont] = useState<{ name: string; url: string; family: string } | null>(null);
+  const [sourceFontFile, setSourceFontFile] = useState<File | null>(null);
   const [fontSize, setFontSize] = useState(64);
   const [lineHeight, setLineHeight] = useState(1.45);
   const [text, setText] = useState(samplePresets[0]);
@@ -175,7 +177,28 @@ export default function Home() {
     const family = `UploadedFont_${file.name.replace(/[^a-zA-Z0-9]/g, "_")}`;
     const url = URL.createObjectURL(file);
     setUploadedFont({ name: file.name.replace(/\.(woff2?|ttf|otf)$/i, ""), url, family });
+    setSourceFontFile(file);
     setFontIndex(fontOptions.length);
+  }
+
+  function downloadBlob(blob: Blob, filename: string) {
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function downloadConfiguredFont() {
+    if (!sourceFontFile || !uploadedFont) return;
+    const originalExtension = sourceFontFile.name.match(/\.[^.]+$/)?.[0] ?? ".ttf";
+    downloadBlob(sourceFontFile, `${uploadedFont.name}-مفعّل${originalExtension}`);
+    const exportedFilename = `${uploadedFont.name}-مفعّل${originalExtension}`;
+    const companionCss = `/* إعدادات مختبر أحمد النهر — ملف CSS مرافق */\n@font-face {\n  font-family: "${uploadedFont.family}";\n  src: url("./${exportedFilename}");\n}\n\n.your-text {\n  font-family: "${uploadedFont.family}";\n  font-feature-settings: ${featureSettings};\n}\n`;
+    window.setTimeout(() => downloadBlob(new Blob([companionCss], { type: "text/css;charset=utf-8" }), `${uploadedFont.name}-إعدادات.css`), 180);
   }
 
   async function copyCSS() {
@@ -241,7 +264,7 @@ export default function Home() {
           <div className="crumbs">
             <span>مساحة العمل</span>
             <span className="crumb-separator">/</span>
-            <strong>مختبر الخصائص</strong>
+            <strong>مختبر أحمد النهر</strong>
           </div>
           <div className="topbar-actions">
             <a className="telegram-top-button" href="https://t.me/royalvoiceowner" target="_blank" rel="noreferrer"><Send size={15} /> تيليجرام</a>
@@ -378,6 +401,11 @@ export default function Home() {
                   <button type="button" onClick={() => fontInputRef.current?.click()}><Plus size={14} /> {uploadedFont ? "استبدال الخط" : "رفع خط"}</button>
                   {uploadedFont && <small title={uploadedFont.name}>{uploadedFont.name}</small>}
                 </div>
+                <div className="font-download-control">
+                  <span>تنزيل الحزمة</span>
+                  <button type="button" onClick={downloadConfiguredFont} disabled={!sourceFontFile}><Download size={14} /> تنزيل الخط + CSS</button>
+                  <small>الخط + ملف الإعدادات</small>
+                </div>
                 <label className="slider-control">
                   <span>حجم الحرف <b>{fontSize}px</b></span>
                   <input type="range" min="34" max="96" value={fontSize} onChange={(event) => setFontSize(Number(event.target.value))} />
@@ -387,6 +415,7 @@ export default function Home() {
                   <input type="range" min="1.1" max="2" step="0.05" value={lineHeight} onChange={(event) => setLineHeight(Number(event.target.value))} />
                 </label>
               </div>
+              <div className="export-note"><Info size={14} /><span>يُحفظ الخط الأصلي مع ملف CSS يحافظ على الخصائص. التثبيت الكامل داخل GSUB/GPOS يحتاج معالجة خط خارج المتصفح.</span></div>
             </section>
 
             <section className="code-panel" id="css">
