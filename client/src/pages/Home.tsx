@@ -123,6 +123,8 @@ export default function Home() {
   const [fontIndex, setFontIndex] = useState(0);
   const [uploadedFont, setUploadedFont] = useState<{ name: string; url: string; family: string } | null>(null);
   const [sourceFontFile, setSourceFontFile] = useState<File | null>(null);
+  const [isBakingFont, setIsBakingFont] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState(64);
   const [lineHeight, setLineHeight] = useState(1.45);
   const [text, setText] = useState(samplePresets[0]);
@@ -192,13 +194,32 @@ export default function Home() {
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
-  function downloadConfiguredFont() {
-    if (!sourceFontFile || !uploadedFont) return;
-    const originalExtension = sourceFontFile.name.match(/\.[^.]+$/)?.[0] ?? ".ttf";
-    downloadBlob(sourceFontFile, `${uploadedFont.name}-مفعّل${originalExtension}`);
-    const exportedFilename = `${uploadedFont.name}-مفعّل${originalExtension}`;
-    const companionCss = `/* إعدادات مختبر أحمد النهر — ملف CSS مرافق */\n@font-face {\n  font-family: "${uploadedFont.family}";\n  src: url("./${exportedFilename}");\n}\n\n.your-text {\n  font-family: "${uploadedFont.family}";\n  font-feature-settings: ${featureSettings};\n}\n`;
-    window.setTimeout(() => downloadBlob(new Blob([companionCss], { type: "text/css;charset=utf-8" }), `${uploadedFont.name}-إعدادات.css`), 180);
+  async function downloadConfiguredFont() {
+    if (!sourceFontFile || !uploadedFont || isBakingFont) return;
+    setIsBakingFont(true);
+    setExportError(null);
+    try {
+      const response = await fetch("/api/fonts/bake", {
+        method: "POST",
+        headers: {
+          "Content-Type": sourceFontFile.type || "application/octet-stream",
+          "X-OpenType-Features": activeFeatures.join(","),
+        },
+        body: sourceFontFile,
+      });
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null) as { error?: string } | null;
+        throw new Error(payload?.error || "تعذّر دمج خصائص الخط");
+      }
+      const blob = await response.blob();
+      const baseName = uploadedFont.name.replace(/\.[^.]+$/, "");
+      const outputExtension = /\.otf$/i.test(sourceFontFile.name) ? ".otf" : ".ttf";
+      downloadBlob(blob, `${baseName}-مضمّن-الخصائص${outputExtension}`);
+    } catch (error) {
+      setExportError(error instanceof Error ? error.message : "تعذّر تنزيل الخط المدمج");
+    } finally {
+      setIsBakingFont(false);
+    }
   }
 
   async function copyCSS() {
@@ -403,8 +424,8 @@ export default function Home() {
                 </div>
                 <div className="font-download-control">
                   <span>تنزيل الحزمة</span>
-                  <button type="button" onClick={downloadConfiguredFont} disabled={!sourceFontFile}><Download size={14} /> تنزيل الخط + CSS</button>
-                  <small>الخط + ملف الإعدادات</small>
+                  <button type="button" onClick={downloadConfiguredFont} disabled={!sourceFontFile || isBakingFont}><Download size={14} /> {isBakingFont ? "جاري دمج الخصائص…" : "تنزيل الخط المدمج"}</button>
+                  <small>{sourceFontFile ? "إخراج TTF/OTF جاهز للاستخدام" : "ارفع خطاً أولاً"}</small>
                 </div>
                 <label className="slider-control">
                   <span>حجم الحرف <b>{fontSize}px</b></span>
@@ -415,7 +436,7 @@ export default function Home() {
                   <input type="range" min="1.1" max="2" step="0.05" value={lineHeight} onChange={(event) => setLineHeight(Number(event.target.value))} />
                 </label>
               </div>
-              <div className="export-note"><Info size={14} /><span>يُحفظ الخط الأصلي مع ملف CSS يحافظ على الخصائص. التثبيت الكامل داخل GSUB/GPOS يحتاج معالجة خط خارج المتصفح.</span></div>
+              <div className={`export-note ${exportError ? "has-error" : ""}`}><Info size={14} /><span>{exportError ?? "يعالج الخادم الخط عبر FontTools ويعيد ملف TTF/OTF جديداً مع تثبيت الخصائص المختارة داخل GSUB/GPOS."}</span></div>
             </section>
 
             <section className="code-panel" id="css">

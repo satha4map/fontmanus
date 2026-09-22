@@ -247,6 +247,8 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, select:focus-visi
 .font-download-control small { color: #8f7c6b; font-size: 8px; }
 .export-note { display: flex; align-items: flex-start; gap: 6px; margin-top: 15px; padding: 8px 10px; border-radius: 8px; color: #8a775f; background: #faf1e4; font-size: 9px; line-height: 1.6; }
 .export-note svg { flex: 0 0 auto; margin-top: 2px; color: #b4774f; }
+.export-note.has-error { color: #934c43; background: #f9e7e2; }
+.export-note.has-error svg { color: #b5564c; }
 input[type="range"] { width: 100%; height: 16px; padding: 0; appearance: none; background: transparent; accent-color: #a9683e; }
 input[type="range"]::-webkit-slider-runnable-track { height: 4px; border-radius: 10px; background: linear-gradient(90deg, #b77448, #e5ddd2); }
 input[type="range"]::-webkit-slider-thumb { width: 14px; height: 14px; margin-top: -5px; appearance: none; border: 2px solid #fffdf8; border-radius: 50%; background: #a56339; box-shadow: 0 1px 4px rgba(85,52,33,.28); }
