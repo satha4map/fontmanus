@@ -352,6 +352,13 @@ export default function Home() {
       </aside>
 
       <main className="workspace">
+        <div className="workspace-topbar">
+          <span className="workspace-title">مختبر أحمد النهر <small>OpenType</small></span>
+          <div className="workspace-top-actions">
+            <a className="telegram-top-button" href="https://t.me/royalvoiceowner" target="_blank" rel="noreferrer"><Send size={15} /> تواصل عبر تيليجرام</a>
+            <button className="utility-button workspace-reset" onClick={resetWorkspace}><RotateCcw size={15} /> إعادة ضبط</button>
+          </div>
+        </div>
         <button className="workspace-menu-button" onClick={() => setMenuOpen(true)} aria-label="فتح القائمة"><Menu size={18} /> القائمة</button>
 
         <section className="content-grid">
