@@ -14,6 +14,7 @@ import {
   Plus,
   RotateCcw,
   Settings2,
+  Send,
   Sparkles,
   Type,
   WandSparkles,
@@ -106,11 +107,13 @@ const samplePresets = [
 ];
 
 const stylisticSets = [
-  { code: "ss01", label: "أسلوب 01" },
-  { code: "ss02", label: "أسلوب 02" },
-  { code: "ss03", label: "أسلوب 03" },
-  { code: "ss04", label: "أسلوب 04" },
+  ...Array.from({ length: 20 }, (_, index) => {
+    const number = String(index + 1).padStart(2, "0");
+    return { code: `ss${number}`, label: `أسلوب ${number}` };
+  }),
   { code: "salt", label: "بدائل" },
+  { code: "swsh", label: "امتدادات" },
+  { code: "cswh", label: "وصلات" },
 ];
 
 export default function Home() {
@@ -126,6 +129,10 @@ export default function Home() {
   const fontInputRef = useRef<HTMLInputElement>(null);
 
   const selected = features.find((feature) => feature.code === selectedFeature) ?? features[0];
+  const selectedStyle = stylisticSets.find((style) => style.code === selectedFeature);
+  const selectedTitle = selectedStyle?.label ?? selected.label;
+  const selectedDescription = selectedStyle ? "تبدّل هذه المجموعة أشكالاً محددة من الحروف إذا كان الخط يدعمها." : selected.description;
+  const selectedEnglish = selectedStyle ? `Stylistic set ${selectedStyle.code.toUpperCase()}` : selected.english;
   const availableFonts = uploadedFont ? [...fontOptions, { ...uploadedFont, className: "font-uploaded" }] : fontOptions;
   const chosenFont = availableFonts[fontIndex] ?? availableFonts[0];
 
@@ -196,7 +203,7 @@ export default function Home() {
         <div className="sidebar-top">
           <div className="brand-mark" aria-hidden="true">م</div>
           <div className="brand-copy">
-            <div className="brand-name">مِحراف</div>
+            <div className="brand-name">مختبر أحمد النهر</div>
             <div className="brand-meta">مختبر OpenType</div>
           </div>
           <button className="mobile-close" onClick={() => setMenuOpen(false)} aria-label="إغلاق القائمة">
@@ -214,6 +221,9 @@ export default function Home() {
           <button className="nav-item nav-button" onClick={() => setText(samplePresets[(samplePresets.indexOf(text) + 1) % samplePresets.length])}>
             <WandSparkles size={18} /> نص تجريبي جديد
           </button>
+          <a className="nav-item telegram-contact" href="https://t.me/royalvoiceowner" target="_blank" rel="noreferrer">
+            <Send size={18} /> تواصل عبر تيليجرام
+          </a>
         </nav>
 
         <div className="sidebar-footer">
@@ -234,6 +244,7 @@ export default function Home() {
             <strong>مختبر الخصائص</strong>
           </div>
           <div className="topbar-actions">
+            <a className="telegram-top-button" href="https://t.me/royalvoiceowner" target="_blank" rel="noreferrer"><Send size={15} /> تيليجرام</a>
             <button className="utility-button" onClick={resetWorkspace}><RotateCcw size={17} /> إعادة ضبط</button>
             <button className="help-button" aria-label="مساعدة"><CircleHelp size={19} /></button>
             <div className="avatar">هـ</div>
@@ -296,9 +307,9 @@ export default function Home() {
             <div className="feature-note">
               <div className="note-icon"><Info size={17} /></div>
               <div>
-                <strong>{selected.label}</strong>
-                <p>{selected.description}</p>
-                <span>{selected.english}</span>
+                <strong>{selectedTitle}</strong>
+                <p>{selectedDescription}</p>
+                <span>{selectedEnglish}</span>
               </div>
             </div>
           </div>
@@ -335,7 +346,7 @@ export default function Home() {
                 ))}
               </div>
               <div className="style-strip" aria-label="مجموعات الأساليب">
-                <div className="style-strip-heading"><Sparkles size={14} /><span>مجموعات الأساليب</span><small>Stylistic sets</small></div>
+                <div className="style-strip-heading"><Sparkles size={14} /><span>كل مجموعات الأساليب</span><small>ss01—ss20</small></div>
                 <div className="style-chips">
                   {stylisticSets.map((style) => {
                     const isActive = activeFeatures.includes(style.code);

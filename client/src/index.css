@@ -105,7 +105,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, select:focus-visi
 .sidebar-top { display: flex; align-items: center; gap: 12px; direction: rtl; padding: 0 7px 36px; }
 .brand-mark { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid rgba(218,179,130,.45); border-radius: 12px; color: #f1d7b9; font-family: "Amiri", serif; font-weight: 700; font-size: 27px; line-height: 1; background: linear-gradient(145deg, rgba(199,138,91,.22), rgba(255,255,255,.04)); box-shadow: inset 0 1px 1px rgba(255,255,255,.12); }
 .brand-copy { flex: 1; }
-.brand-name { letter-spacing: .02em; font-size: 19px; font-weight: 700; line-height: 1.2; }
+.brand-name { letter-spacing: .01em; font-size: 16px; font-weight: 700; line-height: 1.2; white-space: nowrap; }
 .brand-meta { color: #96a3a1; font-size: 10px; letter-spacing: .12em; margin-top: 3px; text-transform: uppercase; direction: ltr; text-align: right; }
 .mobile-close { display: none; color: #fff; background: transparent; padding: 5px; }
 .main-nav { display: flex; flex-direction: column; gap: 5px; }
@@ -115,6 +115,8 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, select:focus-visi
 .nav-item:hover { background: rgba(255,255,255,.07); color: #f8f3e8; }
 .nav-item:active { transform: scale(.97); }
 .nav-item.active { color: #fdf9ed; background: linear-gradient(90deg, rgba(199,138,91,.2), rgba(199,138,91,.05)); box-shadow: inset -2px 0 0 #c78a5b; }
+.telegram-contact { margin-top: 8px; color: #9ed7df; background: rgba(43, 147, 171, .11); }
+.telegram-contact:hover { color: #d7f4f5; background: rgba(43, 147, 171, .22); }
 .nav-item span:last-child { margin-right: auto; direction: ltr; color: #778987; font-family: "DM Mono", monospace; font-size: 9px; }
 .nav-button { width: 100%; background: transparent; border: none; }
 .sidebar-footer { display: flex; gap: 10px; padding: 16px 12px; margin-top: auto; border-radius: 14px; color: #dae0dc; background: rgba(255,255,255,.045); }
@@ -128,6 +130,9 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, select:focus-visi
 .crumbs strong { color: #304143; font-size: 13px; }
 .crumb-separator { color: #b4aaa0; }
 .topbar-actions { display: flex; align-items: center; gap: 12px; direction: rtl; }
+.telegram-top-button { display: inline-flex; align-items: center; gap: 6px; padding: 8px 11px; border: 1px solid rgba(49, 130, 147, .24); border-radius: 8px; color: #267485; background: #edf7f5; text-decoration: none; font-size: 11px; transition: background .16s ease, transform .16s ease; }
+.telegram-top-button:hover { background: #dff0ee; }
+.telegram-top-button:active { transform: scale(.97); }
 .utility-button { display: inline-flex; align-items: center; gap: 7px; padding: 10px 12px; border-radius: 9px; color: #516061; background: transparent; font-size: 12px; transition: background .18s ease, transform .16s ease; }
 .utility-button:hover { background: #ede5d8; }
 .utility-button:active, .help-button:active { transform: scale(.97); }
@@ -212,7 +217,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, select:focus-visi
 .style-strip-heading { display: flex; align-items: center; gap: 5px; flex: 0 0 auto; color: #6d7773; font-size: 10px; font-weight: 600; }
 .style-strip-heading svg { color: #ae7048; }
 .style-strip-heading small { color: #aaa294; font-family: "DM Mono", monospace; font-size: 8px; font-weight: 400; direction: ltr; }
-.style-chips { display: flex; align-items: center; gap: 5px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.style-chips { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; min-width: 0; }
 .style-chip { display: inline-flex; align-items: center; gap: 5px; flex: 0 0 auto; min-height: 27px; padding: 4px 7px; border: 1px solid #e1d7ca; border-radius: 7px; color: #687471; background: #fffdf8; font-size: 9px; transition: all .16s ease; }
 .style-chip:hover { border-color: #c79a72; color: #87502d; background: #fff7ed; }
 .style-chip.active { border-color: #6d9991; color: #185c5d; background: #e7f0ea; box-shadow: inset 0 -2px 0 #357d78; }
@@ -282,6 +287,7 @@ input[type="range"]::-moz-range-thumb { width: 11px; height: 11px; border: 2px s
   .topbar { height: 64px; padding: 0 20px; }
   .menu-button { place-items: center; padding: 8px; }
   .topbar-actions .utility-button { display: none; }
+  .telegram-top-button { padding: 7px 9px; font-size: 10px; }
   .hero { min-height: 310px; padding: 36px 25px 31px; }
   .hero-copy { width: 75%; }
   .hero-copy p { font-size: 12px; }
