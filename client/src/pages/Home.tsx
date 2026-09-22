@@ -11,6 +11,7 @@ import {
   Grid2X2,
   Info,
   LayoutDashboard,
+  LoaderCircle,
   Menu,
   Plus,
   RotateCcw,
@@ -124,6 +125,8 @@ export default function Home() {
   const [uploadedFont, setUploadedFont] = useState<{ name: string; url: string; family: string } | null>(null);
   const [sourceFontFile, setSourceFontFile] = useState<File | null>(null);
   const [isBakingFont, setIsBakingFont] = useState(false);
+  const [exportProgress, setExportProgress] = useState(0);
+  const [exportPhase, setExportPhase] = useState<"idle" | "preparing" | "processing" | "downloading" | "complete">("idle");
   const [exportError, setExportError] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState(64);
   const [lineHeight, setLineHeight] = useState(1.45);
@@ -198,7 +201,12 @@ export default function Home() {
     if (!sourceFontFile || !uploadedFont || isBakingFont) return;
     setIsBakingFont(true);
     setExportError(null);
+    setExportProgress(8);
+    setExportPhase("preparing");
     try {
+      await new Promise((resolve) => window.setTimeout(resolve, 180));
+      setExportPhase("processing");
+      setExportProgress(28);
       const response = await fetch("/api/fonts/bake", {
         method: "POST",
         headers: {
@@ -211,14 +219,46 @@ export default function Home() {
         const payload = await response.json().catch(() => null) as { error?: string } | null;
         throw new Error(payload?.error || "تعذّر دمج خصائص الخط");
       }
-      const blob = await response.blob();
+      setExportPhase("downloading");
+      const contentLength = Number(response.headers.get("content-length") || 0);
+      if (!response.body) {
+        setExportProgress(92);
+        const blob = await response.blob();
+        const baseName = uploadedFont.name.replace(/\.[^.]+$/, "");
+        const outputExtension = /\.otf$/i.test(sourceFontFile.name) ? ".otf" : ".ttf";
+        downloadBlob(blob, `${baseName}-مضمّن-الخصائص${outputExtension}`);
+        setExportProgress(100);
+        setExportPhase("complete");
+        return;
+      }
+      const reader = response.body.getReader();
+      const chunks: Uint8Array[] = [];
+      let received = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (value) {
+          chunks.push(value);
+          received += value.byteLength;
+          const downloadProgress = contentLength ? Math.round((received / contentLength) * 25) : 12;
+          setExportProgress(Math.min(97, 72 + downloadProgress));
+        }
+      }
+      const data = new Uint8Array(received);
+      let offset = 0;
+      for (const chunk of chunks) { data.set(chunk, offset); offset += chunk.byteLength; }
+      const blob = new Blob([data], { type: response.headers.get("content-type") || "font/ttf" });
       const baseName = uploadedFont.name.replace(/\.[^.]+$/, "");
       const outputExtension = /\.otf$/i.test(sourceFontFile.name) ? ".otf" : ".ttf";
       downloadBlob(blob, `${baseName}-مضمّن-الخصائص${outputExtension}`);
+      setExportProgress(100);
+      setExportPhase("complete");
     } catch (error) {
       setExportError(error instanceof Error ? error.message : "تعذّر تنزيل الخط المدمج");
+      setExportPhase("idle");
+      setExportProgress(0);
     } finally {
-      setIsBakingFont(false);
+      window.setTimeout(() => setIsBakingFont(false), 450);
     }
   }
 
@@ -426,6 +466,12 @@ export default function Home() {
                   <span>تنزيل الحزمة</span>
                   <button type="button" onClick={downloadConfiguredFont} disabled={!sourceFontFile || isBakingFont}><Download size={14} /> {isBakingFont ? "جاري دمج الخصائص…" : "تنزيل الخط المدمج"}</button>
                   <small>{sourceFontFile ? "إخراج TTF/OTF جاهز للاستخدام" : "ارفع خطاً أولاً"}</small>
+                  {isBakingFont || exportPhase === "complete" ? (
+                    <div className={`export-progress ${exportPhase === "complete" ? "is-complete" : ""}`} role="status" aria-live="polite">
+                      <div className="export-progress-top"><span><LoaderCircle size={11} className={isBakingFont ? "spin" : ""} />{exportPhase === "preparing" ? "تجهيز الملف" : exportPhase === "processing" ? "دمج الخصائص على الخادم" : exportPhase === "downloading" ? "تنزيل الخط المدمج" : "اكتمل التنزيل"}</span><b>{exportProgress}%</b></div>
+                      <div className="export-progress-track"><span style={{ width: `${exportProgress}%` }} /></div>
+                    </div>
+                  ) : null}
                 </div>
                 <label className="slider-control">
                   <span>حجم الحرف <b>{fontSize}px</b></span>
