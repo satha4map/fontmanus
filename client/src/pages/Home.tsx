@@ -378,6 +378,20 @@ export default function Home() {
             <button className="utility-button workspace-reset" onClick={resetWorkspace}><RotateCcw size={15} /> إعادة ضبط</button>
           </div>
         </div>
+        <section className="premium-banner" aria-label="مختبر أحمد النهر">
+          <div className="premium-banner-copy">
+            <div className="premium-eyebrow"><span /> مختبر عربي متقدم للخطوط <span /></div>
+            <h1>مختبر أحمد النهر</h1>
+            <p>اكتشف خصائص OpenType، جرّبها بصرياً، واصنع نسخة خط جاهزة للاستخدام.</p>
+          </div>
+          <div className="premium-banner-stats" aria-label="إحصاءات المختبر">
+            <div><strong>26</strong><span>خاصية أسلوبية</span></div>
+            <div><strong>3</strong><span>عائلات جاهزة</span></div>
+            <div><strong>100%</strong><span>معاينة مباشرة</span></div>
+          </div>
+          <div className="premium-glyph premium-glyph-one">م</div>
+          <div className="premium-glyph premium-glyph-two">ع</div>
+        </section>
         <div className="mobile-workspace-actions">
           <button className="workspace-menu-button" onClick={() => setMenuOpen(true)} aria-label="فتح القائمة"><Menu size={18} /> القائمة</button>
           <a className="telegram-mobile-button" href="https://t.me/royalvoiceowner" target="_blank" rel="noreferrer"><Send size={14} /> تيليجرام</a>
