@@ -595,3 +595,25 @@ html[data-color-theme="sunset"] .telegram-top-button, html[data-color-theme="sun
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+/* Ready-made text template selector */
+.template-picker-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 12px 20px; border-top: 1px solid #eee7dc; border-bottom: 1px solid #eee7dc; background: linear-gradient(90deg, rgba(237,244,239,.72), rgba(255,253,248,.65)); }
+.template-picker-label { display: flex; align-items: center; gap: 7px; color: #416060; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.template-picker-label svg { color: #a96e47; }
+.template-picker-label small { margin-right: 3px; color: #94a09b; font-size: 9px; font-weight: 400; }
+.template-select-wrap { position: relative; min-width: 190px; }
+.template-select-wrap select { width: 100%; appearance: none; padding: 8px 11px 8px 30px; border: 1px solid #d9e1d8; border-radius: 9px; color: #365b5c; background: #fffdf8; font-size: 10px; cursor: pointer; transition: border-color .2s ease, box-shadow .2s ease, background .2s ease; }
+.template-select-wrap select:hover { border-color: #9cbcb0; background: #fafffb; }
+.template-select-wrap select:focus { border-color: #55958a; box-shadow: 0 0 0 3px rgba(85,149,138,.13); outline: none; }
+.template-select-wrap > svg { position: absolute; left: 9px; top: 50%; color: #8b9b95; pointer-events: none; transform: translateY(-50%); }
+.dark .template-picker-row { border-color: #2b3e40; background: linear-gradient(90deg, rgba(31,57,55,.72), rgba(26,41,43,.72)); }
+.dark .template-picker-label { color: #c4d7cf; }
+.dark .template-picker-label small { color: #91a7a0; }
+.dark .template-select-wrap select { border-color: #3b5050; color: #cce0d7; background: #1c3031; }
+.dark .template-select-wrap select:hover { border-color: #5f9e91; background: #223b3b; }
+@media (max-width: 820px) {
+  .template-picker-row { align-items: stretch; flex-direction: column; gap: 8px; padding: 11px 16px; }
+  .template-picker-label { justify-content: flex-start; }
+  .template-picker-label small { margin-right: auto; }
+  .template-select-wrap { width: 100%; }
+}

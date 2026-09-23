@@ -114,6 +114,17 @@ const samplePresets = [
   "الخط الجيد يجعل القراءة فكرةً لا عائقاً.",
 ];
 
+const textTemplates = [
+  { id: "heading-ar", group: "عناوين عربية", label: "عنوان رئيسي عربي", text: "مختبر أحمد النهر — تجارب الحرف المفتوح" },
+  { id: "heading-en", group: "عناوين عربية", label: "عنوان قصير عربي", text: "مساحة جديدة لفنّ الحروف" },
+  { id: "paragraph-ar", group: "فقرات عربية", label: "فقرة تعريفية", text: "تمنح الخطوط الرقمية النص شخصيته وإيقاعه. جرّب الخصائص المختلفة واكتشف كيف تتغير التفاصيل الصغيرة لتصنع تجربة قراءة أكثر وضوحاً وجمالاً." },
+  { id: "paragraph-long", group: "فقرات عربية", label: "فقرة طويلة", text: "في كل حرف قرار تصميمي؛ في المسافة والوزن والانحناء والتتابع. استخدم هذه المعاينة لاختبار سلوك الخط في النصوص الطويلة ومقارنة البدائل قبل اعتماده في مشروعك." },
+  { id: "interface-ar", group: "نصوص الواجهات", label: "واجهة عربية", text: "تسجيل الدخول   إنشاء حساب   حفظ التغييرات   إلغاء" },
+  { id: "interface-en", group: "نصوص الواجهات", label: "واجهة ثنائية اللغة", text: "الرئيسية · الإعدادات · المساعدة · Home · Settings · Help" },
+  { id: "numbers", group: "أرقام وبيانات", label: "أرقام وجدول", text: "2024 — 2025 — 1,234.56 — 98.7% — ١٢٣٤٥٦٧٨٩" },
+  { id: "mixed", group: "أرقام وبيانات", label: "نص مختلط", text: "OpenType 2.0 | خصائص الخط | #Typography | @2025" },
+];
+
 const stylisticSets = [
   ...Array.from({ length: 20 }, (_, index) => {
     const number = String(index + 1).padStart(2, "0");
@@ -149,6 +160,7 @@ export default function Home() {
   const [fontSize, setFontSize] = useState(64);
   const [lineHeight, setLineHeight] = useState(1.45);
   const [text, setText] = useState(samplePresets[0]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState("default");
   const [copied, setCopied] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -324,7 +336,16 @@ export default function Home() {
     setFontSize(64);
     setLineHeight(1.45);
     setText(samplePresets[0]);
+    setSelectedTemplateId("default");
     setSelectedFeature("liga");
+  }
+
+  function applyTemplate(templateId: string) {
+    if (templateId === "default") { setSelectedTemplateId("default"); return; }
+    const template = textTemplates.find((item) => item.id === templateId);
+    if (!template) return;
+    setSelectedTemplateId(template.id);
+    setText(template.text);
   }
 
   return (
@@ -459,7 +480,7 @@ export default function Home() {
                 <textarea
                   aria-label="نص المعاينة"
                   value={text}
-                  onChange={(event) => setText(event.target.value)}
+                  onChange={(event) => { setText(event.target.value); setSelectedTemplateId("custom"); }}
                   className={`preview-text ${chosenFont.className}`}
                   style={{
                     fontSize: `clamp(38px, ${fontSize / 13}vw, ${fontSize}px)`,
@@ -472,10 +493,32 @@ export default function Home() {
                 <div className="stage-hint">انقر هنا لتحرير النص</div>
               </div>
 
+              <div className="template-picker-row">
+                <div className="template-picker-label"><Type size={15} /><span>قوالب نصية جاهزة</span><small>اختبر الخط بسرعة</small></div>
+                <div className="template-select-wrap">
+                  <select aria-label="اختيار قالب نصي جاهز" value={selectedTemplateId} onChange={(event) => applyTemplate(event.target.value)}>
+                    <option value="default">اختر قالباً جاهزاً…</option>
+                    <option value="custom">نص مخصص من المعاينة</option>
+                    <optgroup label="عناوين عربية">
+                      {textTemplates.filter((template) => template.group === "عناوين عربية").map((template) => <option value={template.id} key={template.id}>{template.label}</option>)}
+                    </optgroup>
+                    <optgroup label="فقرات عربية">
+                      {textTemplates.filter((template) => template.group === "فقرات عربية").map((template) => <option value={template.id} key={template.id}>{template.label}</option>)}
+                    </optgroup>
+                    <optgroup label="نصوص الواجهات">
+                      {textTemplates.filter((template) => template.group === "نصوص الواجهات").map((template) => <option value={template.id} key={template.id}>{template.label}</option>)}
+                    </optgroup>
+                    <optgroup label="أرقام وبيانات">
+                      {textTemplates.filter((template) => template.group === "أرقام وبيانات").map((template) => <option value={template.id} key={template.id}>{template.label}</option>)}
+                    </optgroup>
+                  </select>
+                  <ChevronDown size={15} />
+                </div>
+              </div>
               <div className="quick-presets">
                 <span>نصوص سريعة</span>
                 {samplePresets.map((preset) => (
-                  <button key={preset} className={text === preset ? "chosen" : ""} onClick={() => setText(preset)}>{preset.slice(0, 14)}…</button>
+                  <button key={preset} className={text === preset ? "chosen" : ""} onClick={() => { setText(preset); setSelectedTemplateId("default"); }}>{preset.slice(0, 14)}…</button>
                 ))}
               </div>
               <div className="style-strip" aria-label="مجموعات الأساليب">
