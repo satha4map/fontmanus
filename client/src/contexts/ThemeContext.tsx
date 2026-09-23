@@ -31,10 +31,16 @@ export function ThemeProvider({
     }
     return defaultTheme;
   });
-  const [colorTheme, setColorTheme] = useState<ColorTheme>(() => {
+  const [colorTheme, setColorThemeState] = useState<ColorTheme>(() => {
     const stored = localStorage.getItem("color-theme") as ColorTheme | null;
     return stored || "sand";
   });
+
+  const animateThemeChange = (change: () => void) => {
+    document.documentElement.classList.add("theme-transitioning");
+    change();
+    window.setTimeout(() => document.documentElement.classList.remove("theme-transitioning"), 360);
+  };
 
   useEffect(() => {
     const root = document.documentElement;
@@ -55,10 +61,13 @@ export function ThemeProvider({
   }, [colorTheme]);
 
   const toggleTheme = switchable
-    ? () => {
-        setTheme(prev => (prev === "light" ? "dark" : "light"));
-      }
+    ? () => animateThemeChange(() => setTheme(prev => (prev === "light" ? "dark" : "light")))
     : undefined;
+
+  const setColorTheme = (nextTheme: ColorTheme) => {
+    if (nextTheme === colorTheme) return;
+    animateThemeChange(() => setColorThemeState(nextTheme));
+  };
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, switchable, colorTheme, setColorTheme }}>

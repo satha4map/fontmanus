@@ -555,3 +555,43 @@ html[data-color-theme="sunset"] .telegram-top-button, html[data-color-theme="sun
   .premium-glyph-two { width: 74px; height: 74px; right: 4%; bottom: -30px; font-size: 50px; }
   .content-grid { padding: 20px 16px 10px; }
 }
+
+/* Interaction polish: motion is subtle, reversible, and never changes layout. */
+@media (prefers-reduced-motion: no-preference) {
+  html.theme-transitioning * {
+    transition-property: background-color, color, border-color, box-shadow, fill, stroke !important;
+    transition-duration: 360ms !important;
+    transition-timing-function: cubic-bezier(.23, 1, .32, 1) !important;
+  }
+  .feature-row, .style-chip, .quick-presets button, .round-action, .font-upload-control button, .font-download-control button, .workspace-menu-button {
+    will-change: transform, background-color;
+  }
+  .feature-row:hover { transform: translateX(-3px); box-shadow: inset -2px 0 0 rgba(35,114,116,.3); }
+  .feature-row.is-selected { animation: control-select .28s var(--ease-out, ease) both; }
+  .feature-row.is-active .feature-switch { box-shadow: 0 0 0 4px rgba(35,114,116,.1); }
+  .feature-switch { transition: background .22s var(--ease-out, ease), box-shadow .22s var(--ease-out, ease); }
+  .feature-switch span { transition: transform .24s var(--ease-out, ease), box-shadow .2s ease; }
+  .feature-row:active, .style-chip:active, .quick-presets button:active, .round-action:active, .font-upload-control button:active, .font-download-control button:active { transform: scale(.965); }
+  .style-chip { transition: transform .18s var(--ease-out, ease), background .2s ease, border-color .2s ease, box-shadow .2s ease, color .2s ease; }
+  .style-chip:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(47,64,57,.1); }
+  .style-chip.active { animation: chip-pop .32s var(--ease-out, ease) both; }
+  .quick-presets button { transition: transform .18s var(--ease-out, ease), background .2s ease, border-color .2s ease, color .2s ease; }
+  .quick-presets button:hover { transform: translateY(-2px); }
+  .round-action:hover { transform: rotate(8deg) translateY(-1px); box-shadow: 0 6px 14px rgba(166,99,55,.13); }
+  .telegram-top-button:hover, .theme-toggle:hover, .palette-toggle:hover, .utility-button:hover { transform: translateY(-2px); box-shadow: 0 7px 16px rgba(47,64,57,.1); }
+  .palette-menu { transform-origin: top right; }
+  .palette-menu button { transition: transform .16s var(--ease-out, ease), background .18s ease, color .18s ease; }
+  .palette-menu button:hover { transform: translateX(-3px); }
+  .palette-menu button.selected i { animation: swatch-glow .42s var(--ease-out, ease) both; }
+  .premium-glyph-one { animation: glyph-drift 8s ease-in-out infinite alternate; }
+  .premium-glyph-two { animation: glyph-drift 6s .5s ease-in-out infinite alternate-reverse; }
+  .status-dot { animation: status-breathe 2.4s ease-in-out infinite; }
+}
+@keyframes control-select { 0% { opacity: .7; transform: translateX(4px); } 100% { opacity: 1; transform: translateX(0); } }
+@keyframes chip-pop { 0% { transform: scale(.94); } 70% { transform: scale(1.035); } 100% { transform: scale(1); } }
+@keyframes swatch-glow { 0% { transform: scale(.7); box-shadow: 0 0 0 0 rgba(79,148,123,.38); } 70% { transform: scale(1.18); box-shadow: 0 0 0 5px rgba(79,148,123,0); } 100% { transform: scale(1); } }
+@keyframes glyph-drift { from { transform: translate3d(0, 0, 0) rotate(-13deg); } to { transform: translate3d(0, 8px, 0) rotate(-10deg); } }
+@keyframes status-breathe { 0%, 100% { box-shadow: 0 0 0 3px rgba(84,165,123,.11); } 50% { box-shadow: 0 0 0 6px rgba(84,165,123,.03); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}
