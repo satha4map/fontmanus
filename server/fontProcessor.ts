@@ -52,6 +52,21 @@ export async function inspectFontAxes(input: Buffer) {
   }
 }
 
+export async function inspectFontInfo(input: Buffer) {
+  if (input.byteLength === 0) throw new Error("ملف الخط فارغ");
+  if (input.byteLength > MAX_FONT_BYTES) throw new Error("حجم الخط يتجاوز الحد المسموح 50MB");
+  const tempDir = path.join(os.tmpdir(), `opentype-info-${randomUUID()}`);
+  await mkdir(tempDir, { recursive: true });
+  const inputPath = path.join(tempDir, "source-font");
+  try {
+    await writeFile(inputPath, input);
+    const output = await runPython("read_font_info.py", [inputPath]);
+    return JSON.parse(output) as Record<string, unknown>;
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
+}
+
 export async function bakeFontFeatures(input: Buffer, features: string[], axes: Record<string, number> = {}) {
   if (input.byteLength === 0) throw new Error("ملف الخط فارغ");
   if (input.byteLength > MAX_FONT_BYTES) throw new Error("حجم الخط يتجاوز الحد المسموح 50MB");

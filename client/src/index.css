@@ -752,3 +752,24 @@ html[data-color-theme="sunset"] .telegram-top-button, html[data-color-theme="sun
   .font-info-grid span { margin: 0; }
   .font-info-grid strong { text-align: left; }
 }
+
+.font-info-loading { margin: -6px 0 12px; color: #a36339; font-size: 10px; }
+.font-info-technical { margin-top: 13px; padding: 12px; border: 1px solid #dce8df; border-radius: 11px; background: #f4f8f1; }
+.font-info-technical-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 9px; color: #35635e; font-size: 10px; font-weight: 600; }
+.font-info-technical-heading small { color: #7f9b91; font-family: "DM Mono", monospace; font-size: 8px; font-weight: 400; direction: ltr; }
+.font-info-technical-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+.font-info-technical-grid > div { min-width: 0; padding: 8px 9px; border-radius: 8px; background: rgba(255,255,255,.58); }
+.font-info-technical-grid span { display: block; margin-bottom: 4px; color: #82948b; font-size: 8px; }
+.font-info-technical-grid strong { display: block; overflow-wrap: anywhere; color: #3c625d; font-family: "DM Mono", "IBM Plex Sans Arabic", sans-serif; font-size: 9px; font-weight: 500; line-height: 1.5; }
+.font-info-technical-grid .font-info-tables { grid-column: 1 / -1; }
+.dark .font-info-loading { color: #d1a073; }
+.dark .font-info-technical { border-color: #385453; background: #223d3d; }
+.dark .font-info-technical-heading { color: #b8d5c8; }
+.dark .font-info-technical-heading small { color: #98b4a8; }
+.dark .font-info-technical-grid > div { background: rgba(37,66,65,.72); }
+.dark .font-info-technical-grid span { color: #94aca1; }
+.dark .font-info-technical-grid strong { color: #c3ded1; }
+@media (max-width: 620px) {
+  .font-info-technical-grid { grid-template-columns: 1fr; }
+  .font-info-technical-grid .font-info-tables { grid-column: auto; }
+}

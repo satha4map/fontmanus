@@ -8,7 +8,7 @@ import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
-import { bakeFontFeatures, inspectFontAxes, MAX_FONT_BYTES } from "../fontProcessor";
+import { bakeFontFeatures, inspectFontAxes, inspectFontInfo, MAX_FONT_BYTES } from "../fontProcessor";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -41,6 +41,15 @@ async function startServer() {
       res.json({ axes: await inspectFontAxes(input) });
     } catch (error) {
       const message = error instanceof Error ? error.message : "تعذّر قراءة محاور الخط";
+      res.status(422).json({ error: message });
+    }
+  });
+  app.post("/api/fonts/info", express.raw({ type: "*/*", limit: `${MAX_FONT_BYTES}b` }), async (req, res) => {
+    try {
+      const input = Buffer.isBuffer(req.body) ? req.body : Buffer.from(req.body ?? "");
+      res.json(await inspectFontInfo(input));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "تعذّرت قراءة معلومات الخط";
       res.status(422).json({ error: message });
     }
   });

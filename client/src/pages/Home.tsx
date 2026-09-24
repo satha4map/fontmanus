@@ -39,8 +39,23 @@ type Feature = {
 };
 
 type VariableAxis = { tag: string; name: string; min: number; default: number; max: number };
-type FontMetadata = { designer: string; publisher: string; website: string; license: string; version: string; formats: string; language: string; notes: string };
+type FontInspection = { family?: string; subfamily?: string; fullName?: string; postscriptName?: string; version?: string; designer?: string; manufacturer?: string; description?: string; copyright?: string; trademark?: string; license?: string; licenseUrl?: string; vendorUrl?: string; fileFormat?: string; fileSize?: number; tables?: string[]; tableCount?: number; glyphCount?: number; unitsPerEm?: number; axes?: VariableAxis[]; unicodeRanges?: string[]; hasColor?: boolean };
+type FontMetadata = { designer: string; publisher: string; website: string; license: string; version: string; formats: string; language: string; notes: string; technical?: FontInspection };
 type FontOption = { name: string; className: string; family: string; metadata: FontMetadata };
+
+function metadataFromInspection(info: FontInspection): FontMetadata {
+  return {
+    designer: info.designer || "غير مذكور داخل ملف الخط",
+    publisher: info.manufacturer || "غير مذكور داخل ملف الخط",
+    website: info.vendorUrl || info.licenseUrl || "",
+    license: info.license || "غير مذكور داخل ملف الخط",
+    version: info.version || "غير مذكور داخل ملف الخط",
+    formats: info.fileFormat || "غير معروف",
+    language: info.unicodeRanges?.length ? `${info.unicodeRanges.length} نطاقات Unicode مسجلة` : "غير مذكورة داخل ملف الخط",
+    notes: info.description || info.copyright || "تم استخراج البيانات مباشرة من جداول الخط عبر FontTools.",
+    technical: info,
+  };
+}
 
 const features: Feature[] = [
   {
@@ -151,6 +166,9 @@ export default function Home() {
   const [selectedFeature, setSelectedFeature] = useState("liga");
   const [fontIndex, setFontIndex] = useState(0);
   const [uploadedFont, setUploadedFont] = useState<{ name: string; url: string; family: string } | null>(null);
+  const [uploadedFontMetadata, setUploadedFontMetadata] = useState<FontMetadata | null>(null);
+  const [fontMetadataLoading, setFontMetadataLoading] = useState(false);
+  const [fontMetadataError, setFontMetadataError] = useState<string | null>(null);
   const [sourceFontFile, setSourceFontFile] = useState<File | null>(null);
   const [variableAxes, setVariableAxes] = useState<VariableAxis[]>([]);
   const [axisValues, setAxisValues] = useState<Record<string, number>>({});
@@ -176,7 +194,7 @@ export default function Home() {
   const selectedTitle = selectedStyle?.label ?? selected.label;
   const selectedDescription = selectedStyle ? "تبدّل هذه المجموعة أشكالاً محددة من الحروف إذا كان الخط يدعمها." : selected.description;
   const selectedEnglish = selectedStyle ? `Stylistic set ${selectedStyle.code.toUpperCase()}` : selected.english;
-  const availableFonts: FontOption[] = uploadedFont ? [...fontOptions, { ...uploadedFont, className: "font-uploaded", metadata: { designer: "غير محدد — خط مرفوع من جهازك", publisher: "ملف محلي", website: "", license: "يرجى مراجعة ترخيص ملف الخط الأصلي", version: "غير متاح", formats: sourceFontFile?.name.split(".").pop()?.toUpperCase() ?? "Font", language: "يُحدّد حسب ملف الخط", notes: "هذه المعلومات مستخرجة من اسم الملف ومصدر الرفع المحلي فقط. لم يتم تحليل بيانات حقوق النشر داخل جدول الاسم بعد." } }] : fontOptions;
+  const availableFonts: FontOption[] = uploadedFont ? [...fontOptions, { ...uploadedFont, className: "font-uploaded", metadata: uploadedFontMetadata ?? { designer: "جاري قراءة بيانات الملف…", publisher: "ملف مرفوع من جهازك", website: "", license: "جاري القراءة…", version: "جاري القراءة…", formats: sourceFontFile?.name.split(".").pop()?.toUpperCase() ?? "Font", language: "جاري القراءة…", notes: fontMetadataError ?? "يتم استخراج البيانات الحقيقية من جداول الخط عبر FontTools." } }] : fontOptions;
   const chosenFont = availableFonts[fontIndex] ?? availableFonts[0];
 
   useEffect(() => {
@@ -223,11 +241,28 @@ export default function Home() {
     const family = `UploadedFont_${file.name.replace(/[^a-zA-Z0-9]/g, "_")}`;
     const url = URL.createObjectURL(file);
     setUploadedFont({ name: file.name.replace(/\.(woff2?|ttf|otf)$/i, ""), url, family });
+    setUploadedFontMetadata(null);
+    setFontMetadataError(null);
+    setFontMetadataLoading(true);
     setSourceFontFile(file);
     setVariableAxes([]);
     setAxisValues({});
     setAxisLoading(true);
     setFontIndex(fontOptions.length);
+    try {
+      const infoResponse = await fetch("/api/fonts/info", { method: "POST", headers: { "Content-Type": file.type || "application/octet-stream" }, body: file });
+      if (infoResponse.ok) {
+        const info = await infoResponse.json() as FontInspection;
+        setUploadedFontMetadata(metadataFromInspection(info));
+      } else {
+        const payload = await infoResponse.json().catch(() => null) as { error?: string } | null;
+        setFontMetadataError(payload?.error || "تعذّر قراءة بيانات الخط");
+      }
+    } catch {
+      setFontMetadataError("تعذّر الاتصال بخدمة قراءة بيانات الخط");
+    } finally {
+      setFontMetadataLoading(false);
+    }
     try {
       const response = await fetch("/api/fonts/axes", {
         method: "POST",
@@ -653,6 +688,7 @@ export default function Home() {
                 <button type="button" className="font-info-close" onClick={() => setFontInfoOpen(false)} aria-label="إغلاق معلومات الخط"><X size={17} /></button>
               </div>
               <p className="font-info-lead">معلومات الخط المصمم ومصدر النشر والتفاصيل التقنية المتاحة.</p>
+              {fontMetadataLoading && <p className="font-info-loading">جاري تحليل ملف الخط واستخراج البيانات الحقيقية…</p>}
               <div className="font-info-grid">
                 <div><span>المصمم</span><strong>{chosenFont.metadata.designer}</strong></div>
                 <div><span>الناشر / المشروع</span><strong>{chosenFont.metadata.publisher}</strong></div>
@@ -661,6 +697,21 @@ export default function Home() {
                 <div><span>الصيغ</span><strong dir="ltr">{chosenFont.metadata.formats}</strong></div>
                 <div><span>اللغات</span><strong>{chosenFont.metadata.language}</strong></div>
               </div>
+              {chosenFont.metadata.technical && (
+                <div className="font-info-technical">
+                  <div className="font-info-technical-heading"><span>بيانات داخلية من ملف الخط</span><small>FontTools</small></div>
+                  <div className="font-info-technical-grid">
+                    <div><span>اسم العائلة الداخلي</span><strong>{chosenFont.metadata.technical.family || "غير مذكور"}</strong></div>
+                    <div><span>الاسم الكامل</span><strong>{chosenFont.metadata.technical.fullName || "غير مذكور"}</strong></div>
+                    <div><span>اسم PostScript</span><strong dir="ltr">{chosenFont.metadata.technical.postscriptName || "غير مذكور"}</strong></div>
+                    <div><span>عدد الحروف</span><strong>{chosenFont.metadata.technical.glyphCount ?? "غير مذكور"}</strong></div>
+                    <div><span>وحدة التصميم</span><strong>{chosenFont.metadata.technical.unitsPerEm ?? "غير مذكور"}</strong></div>
+                    <div><span>محاور متغيرة</span><strong dir="ltr">{chosenFont.metadata.technical.axes?.length ? chosenFont.metadata.technical.axes.map((axis) => axis.tag).join(" · ") : "لا يوجد"}</strong></div>
+                    <div className="font-info-tables"><span>جداول OpenType</span><strong dir="ltr">{chosenFont.metadata.technical.tables?.join(" · ") || "غير مذكورة"}</strong></div>
+                    {chosenFont.metadata.technical.copyright && <div className="font-info-tables"><span>حقوق النشر داخل الملف</span><strong>{chosenFont.metadata.technical.copyright}</strong></div>}
+                  </div>
+                </div>
+              )}
               <div className="font-info-notes"><Info size={14} /><p>{chosenFont.metadata.notes}</p></div>
               {chosenFont.metadata.website ? <a className="font-info-source" href={chosenFont.metadata.website} target="_blank" rel="noreferrer">فتح موقع النشر <ArrowUpLeft size={14} /></a> : <span className="font-info-source is-muted">لا يوجد رابط نشر للخط المرفوع محلياً</span>}
             </section>
