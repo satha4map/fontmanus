@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
+@font-face { font-family: "SFSultan2"; src: url("/manus-storage/SFSultan2_d16bc565.otf") format("opentype"); font-style: normal; font-weight: 400 800; font-display: swap; }
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -687,3 +688,6 @@ html[data-color-theme="sunset"] .telegram-top-button, html[data-color-theme="sun
   .comparison-text { min-height: 92px; }
   .comparison-heading { align-items: flex-start; flex-direction: column; gap: 4px; }
 }
+
+/* The studio identity uses the uploaded Sultan display face. */
+.brand-name, .workspace-title, .premium-banner h1 { font-family: "SFSultan2", "Amiri", serif; }
