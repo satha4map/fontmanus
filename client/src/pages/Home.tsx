@@ -405,7 +405,7 @@ export default function Home() {
         <section className="premium-banner" aria-label="مختبر أحمد النهر">
           <div className="premium-banner-copy">
             <div className="premium-eyebrow"><span /> مختبر عربي متقدم للخطوط <span /></div>
-            <h1>مختبر أحمد النهر</h1>
+            <h1 style={{fontWeight: '600'}}>مختبـــر أحمـــــد النهـــر</h1>
             <p>اكتشف خصائص OpenType، جرّبها بصرياً، واصنع نسخة خط جاهزة للاستخدام.</p>
           </div>
           <div className="premium-banner-stats" aria-label="إحصاءات المختبر">
@@ -418,7 +418,7 @@ export default function Home() {
         </section>
         <div className="mobile-workspace-actions">
           <button className="workspace-menu-button" onClick={() => setMenuOpen(true)} aria-label="فتح القائمة"><Menu size={18} /> القائمة</button>
-          <a className="telegram-mobile-button" href="https://t.me/royalvoiceowner" target="_blank" rel="noreferrer"><Send size={14} /> تيليجرام</a>
+          <a className="telegram-mobile-button" href="https://t.me/royalvoiceowner" target="_blank" rel="noreferrer" style={{color: '#080808'}}><Send size={14} style={{color: '#080808'}} /> تواصل تيليجرام</a>
           <button className="theme-toggle theme-toggle-mobile" type="button" onClick={() => toggleTheme?.()} aria-label={theme === "dark" ? "تفعيل الوضع النهاري" : "تفعيل الوضع الليلي"}>{theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}<span>{theme === "dark" ? "نهاري" : "ليلي"}</span></button>
           <div className="palette-picker palette-picker-mobile">
             <button className="palette-toggle" type="button" onClick={() => setPaletteOpen((open) => !open)} aria-expanded={paletteOpen} aria-label="اختيار السمة اللونية"><Palette size={14} /><i style={{ background: colorThemes.find((item) => item.id === colorTheme)?.swatch }} /></button>
@@ -426,7 +426,7 @@ export default function Home() {
           </div>
         </div>
 
-        <section className="content-grid">
+        <section className="content-grid" style={{borderRadius: 'px', borderWidth: 'px', fontSize: 'px', height: 'px', marginBottom: 'px', marginLeft: 'px', marginRight: 'px', marginTop: 'px', paddingBottom: 'px', paddingLeft: 'px', paddingRight: 'px', paddingTop: 'px', width: 'px'}}>
           <div className="control-panel" id="features">
             <div className="panel-heading">
               <div>
@@ -505,8 +505,8 @@ export default function Home() {
                   <div className="comparison-heading"><span><Grid2X2 size={14} /> مقارنة المسافات والأحجام</span><small>قبل التعديل مقابل الإعدادات الحالية</small></div>
                   <div className="comparison-grid">
                     <article className="comparison-card comparison-before">
-                      <div className="comparison-card-top"><span>قبل التعديل</span><b>64px · 0.000em · 1.45</b></div>
-                      <div className={`comparison-text ${chosenFont.className}`} style={{ fontSize: "clamp(28px, 3vw, 64px)", letterSpacing: "0em", lineHeight: 1.45, fontFamily: chosenFont.family, fontFeatureSettings: featureSettings, fontVariationSettings: variationSettings || undefined }}>{text}</div>
+                      <div className="comparison-card-top"><span>قبل التعديل</span><b>بدون خصائص · 64px · 1.45</b></div>
+                      <div className={`comparison-text ${chosenFont.className}`} style={{ fontSize: "clamp(28px, 3vw, 64px)", letterSpacing: "0em", lineHeight: 1.45, fontFamily: chosenFont.family, fontFeatureSettings: "normal", fontVariationSettings: "normal" }}>{text}</div>
                     </article>
                     <article className="comparison-card comparison-after">
                       <div className="comparison-card-top"><span>بعد التعديل</span><b>{fontSize}px · {letterSpacing.toFixed(3)}em · {lineHeight.toFixed(2)}</b></div>
