@@ -160,6 +160,7 @@ export default function Home() {
   const [fontSize, setFontSize] = useState(64);
   const [lineHeight, setLineHeight] = useState(1.45);
   const [letterSpacing, setLetterSpacing] = useState(0);
+  const [comparisonEnabled, setComparisonEnabled] = useState(false);
   const [text, setText] = useState(samplePresets[0]);
   const [selectedTemplateId, setSelectedTemplateId] = useState("default");
   const [copied, setCopied] = useState(false);
@@ -473,7 +474,10 @@ export default function Home() {
             <section className="preview-panel">
               <div className="preview-header">
                 <div className="preview-title"><Eye size={17} /><span>المعاينة الحية</span></div>
-                <div className="preview-status"><span className="status-dot" /> يتحدّث مباشرة</div>
+                <div className="preview-header-actions">
+                  <div className="preview-status"><span className="status-dot" /> يتحدّث مباشرة</div>
+                  <button type="button" className={`compare-toggle ${comparisonEnabled ? "active" : ""}`} onClick={() => setComparisonEnabled((enabled) => !enabled)} aria-pressed={comparisonEnabled}><Grid2X2 size={13} /> {comparisonEnabled ? "إغلاق المقارنة" : "مقارنة قبل/بعد"}</button>
+                </div>
               </div>
 
               <div className="editor-stage">
@@ -495,6 +499,22 @@ export default function Home() {
                 />
                 <div className="stage-hint">انقر هنا لتحرير النص</div>
               </div>
+
+              {comparisonEnabled && (
+                <div className="comparison-panel" aria-label="مقارنة النص قبل وبعد التعديل">
+                  <div className="comparison-heading"><span><Grid2X2 size={14} /> مقارنة المسافات والأحجام</span><small>قبل التعديل مقابل الإعدادات الحالية</small></div>
+                  <div className="comparison-grid">
+                    <article className="comparison-card comparison-before">
+                      <div className="comparison-card-top"><span>قبل التعديل</span><b>64px · 0.000em · 1.45</b></div>
+                      <div className={`comparison-text ${chosenFont.className}`} style={{ fontSize: "clamp(28px, 3vw, 64px)", letterSpacing: "0em", lineHeight: 1.45, fontFamily: chosenFont.family, fontFeatureSettings: featureSettings, fontVariationSettings: variationSettings || undefined }}>{text}</div>
+                    </article>
+                    <article className="comparison-card comparison-after">
+                      <div className="comparison-card-top"><span>بعد التعديل</span><b>{fontSize}px · {letterSpacing.toFixed(3)}em · {lineHeight.toFixed(2)}</b></div>
+                      <div className={`comparison-text ${chosenFont.className}`} style={{ fontSize: `clamp(28px, 3vw, ${fontSize}px)`, letterSpacing: `${letterSpacing}em`, lineHeight, fontFamily: chosenFont.family, fontFeatureSettings: featureSettings, fontVariationSettings: variationSettings || undefined }}>{text}</div>
+                    </article>
+                  </div>
+                </div>
+              )}
 
               <div className="template-picker-row">
                 <div className="template-picker-label"><Type size={15} /><span>قوالب نصية جاهزة</span><small>اختبر الخط بسرعة</small></div>
