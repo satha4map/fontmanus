@@ -39,6 +39,8 @@ type Feature = {
 };
 
 type VariableAxis = { tag: string; name: string; min: number; default: number; max: number };
+type FontMetadata = { designer: string; publisher: string; website: string; license: string; version: string; formats: string; language: string; notes: string };
+type FontOption = { name: string; className: string; family: string; metadata: FontMetadata };
 
 const features: Feature[] = [
   {
@@ -102,10 +104,10 @@ const features: Feature[] = [
   },
 ];
 
-const fontOptions = [
-  { name: "Amiri", className: "font-amiri", family: '"Amiri", serif' },
-  { name: "Noto Naskh Arabic", className: "font-naskh", family: '"Noto Naskh Arabic", serif' },
-  { name: "IBM Plex Sans Arabic", className: "font-plex", family: '"IBM Plex Sans Arabic", sans-serif' },
+const fontOptions: FontOption[] = [
+  { name: "Amiri", className: "font-amiri", family: '"Amiri", serif', metadata: { designer: "خالد حسني", publisher: "مشروع Amiri", website: "https://www.amirifont.org", license: "SIL Open Font License 1.1", version: "الإصدار المستقر المتاح عبر Google Fonts", formats: "TTF / OTF / WOFF2", language: "العربية واللغات ذات الكتابة العربية", notes: "خط نسخي عربي مفتوح المصدر مستوحى من مطبوعات بولاق، ومصمم للنصوص الطويلة والعناوين." } },
+  { name: "Noto Naskh Arabic", className: "font-naskh", family: '"Noto Naskh Arabic", serif', metadata: { designer: "Google Noto Fonts", publisher: "Google", website: "https://fonts.google.com/specimen/Noto+Naskh+Arabic", license: "SIL Open Font License 1.1", version: "الإصدار المتاح عبر Google Fonts", formats: "TTF / OTF / WOFF2", language: "العربية ومجموعة واسعة من اللغات", notes: "خط نسخي عملي يركز على وضوح القراءة ودعم النصوص العربية متعددة اللغات." } },
+  { name: "IBM Plex Sans Arabic", className: "font-plex", family: '"IBM Plex Sans Arabic", sans-serif', metadata: { designer: "IBM Brand & Experience", publisher: "IBM", website: "https://www.ibm.com/plex", license: "SIL Open Font License 1.1", version: "الإصدار المتاح عبر Google Fonts", formats: "TTF / OTF / WOFF2", language: "العربية واللاتينية", notes: "عائلة sans عربية معاصرة مصممة للواجهات، المنتجات الرقمية، والنصوص المختلطة." } },
 ];
 
 const samplePresets = [
@@ -166,6 +168,7 @@ export default function Home() {
   const [copied, setCopied] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [fontInfoOpen, setFontInfoOpen] = useState(false);
   const fontInputRef = useRef<HTMLInputElement>(null);
 
   const selected = features.find((feature) => feature.code === selectedFeature) ?? features[0];
@@ -173,7 +176,7 @@ export default function Home() {
   const selectedTitle = selectedStyle?.label ?? selected.label;
   const selectedDescription = selectedStyle ? "تبدّل هذه المجموعة أشكالاً محددة من الحروف إذا كان الخط يدعمها." : selected.description;
   const selectedEnglish = selectedStyle ? `Stylistic set ${selectedStyle.code.toUpperCase()}` : selected.english;
-  const availableFonts = uploadedFont ? [...fontOptions, { ...uploadedFont, className: "font-uploaded" }] : fontOptions;
+  const availableFonts: FontOption[] = uploadedFont ? [...fontOptions, { ...uploadedFont, className: "font-uploaded", metadata: { designer: "غير محدد — خط مرفوع من جهازك", publisher: "ملف محلي", website: "", license: "يرجى مراجعة ترخيص ملف الخط الأصلي", version: "غير متاح", formats: sourceFontFile?.name.split(".").pop()?.toUpperCase() ?? "Font", language: "يُحدّد حسب ملف الخط", notes: "هذه المعلومات مستخرجة من اسم الملف ومصدر الرفع المحلي فقط. لم يتم تحليل بيانات حقوق النشر داخل جدول الاسم بعد." } }] : fontOptions;
   const chosenFont = availableFonts[fontIndex] ?? availableFonts[0];
 
   useEffect(() => {
@@ -562,7 +565,7 @@ export default function Home() {
             <section className="adjustment-panel">
               <div className="adjustment-heading"><Settings2 size={17} /><span>إعدادات المعاينة</span></div>
               <div className="adjustment-grid">
-                <label className="select-control">
+                <div className="select-control">
                   <span>عائلة الخط</span>
                   <div className="select-wrap">
                     <select value={fontIndex} onChange={(event) => setFontIndex(Number(event.target.value))}>
@@ -570,7 +573,8 @@ export default function Home() {
                     </select>
                     <ChevronDown size={16} />
                   </div>
-                </label>
+                  <button type="button" className="font-info-button" onClick={() => setFontInfoOpen(true)}><Info size={13} /> معلومات الخط</button>
+                </div>
                 <div className="font-upload-control">
                   <span>استيراد من الجهاز</span>
                   <input ref={fontInputRef} type="file" accept=".woff,.woff2,.ttf,.otf,font/woff,font/woff2,font/ttf,font/otf" onChange={handleFontUpload} hidden />
@@ -640,6 +644,28 @@ export default function Home() {
             <article><span className="guide-number">03</span><h3>للعناوين</h3><p>جرّب المجموعات الأسلوبية بحذر لإضافة شخصية من دون التضحية بالوضوح.</p></article>
           </div>
         </section>
+
+        {fontInfoOpen && (
+          <div className="font-info-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setFontInfoOpen(false); }}>
+            <section className="font-info-dialog" role="dialog" aria-modal="true" aria-labelledby="font-info-title">
+              <div className="font-info-dialog-header">
+                <div><span className="panel-eyebrow">FONT INFORMATION</span><h2 id="font-info-title">{chosenFont.name}</h2></div>
+                <button type="button" className="font-info-close" onClick={() => setFontInfoOpen(false)} aria-label="إغلاق معلومات الخط"><X size={17} /></button>
+              </div>
+              <p className="font-info-lead">معلومات الخط المصمم ومصدر النشر والتفاصيل التقنية المتاحة.</p>
+              <div className="font-info-grid">
+                <div><span>المصمم</span><strong>{chosenFont.metadata.designer}</strong></div>
+                <div><span>الناشر / المشروع</span><strong>{chosenFont.metadata.publisher}</strong></div>
+                <div><span>الترخيص</span><strong>{chosenFont.metadata.license}</strong></div>
+                <div><span>الإصدار</span><strong>{chosenFont.metadata.version}</strong></div>
+                <div><span>الصيغ</span><strong dir="ltr">{chosenFont.metadata.formats}</strong></div>
+                <div><span>اللغات</span><strong>{chosenFont.metadata.language}</strong></div>
+              </div>
+              <div className="font-info-notes"><Info size={14} /><p>{chosenFont.metadata.notes}</p></div>
+              {chosenFont.metadata.website ? <a className="font-info-source" href={chosenFont.metadata.website} target="_blank" rel="noreferrer">فتح موقع النشر <ArrowUpLeft size={14} /></a> : <span className="font-info-source is-muted">لا يوجد رابط نشر للخط المرفوع محلياً</span>}
+            </section>
+          </div>
+        )}
 
         <footer className="page-footer">
           <span>مِحراف — مساحة صغيرة لتجارب الحرف الكبير.</span>

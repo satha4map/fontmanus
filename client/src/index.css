@@ -705,3 +705,50 @@ html[data-color-theme="sunset"] .telegram-top-button, html[data-color-theme="sun
   .workspace-title { font-size: clamp(15px, 4.8vw, 19px); font-weight: 500; }
   .premium-banner h1 { max-width: 100%; font-size: clamp(29px, 9.4vw, 42px); font-weight: 500; line-height: .98; letter-spacing: -.035em; }
 }
+
+/* Font metadata information dialog */
+.font-info-button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 27px; padding: 0 8px; border: 1px solid #d9e4dc; border-radius: 7px; color: #397672; background: #f2f8f1; font-size: 9px; cursor: pointer; transition: background .16s ease, border-color .16s ease, transform .16s ease; }
+.font-info-button:hover { border-color: #91b9a9; background: #e6f2e9; }
+.font-info-button:active { transform: scale(.97); }
+.font-info-backdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; background: rgba(17,30,31,.48); backdrop-filter: blur(7px); animation: font-info-fade .18s ease-out; }
+.font-info-dialog { width: min(620px, 100%); max-height: min(680px, calc(100vh - 40px)); overflow: auto; padding: 24px; border: 1px solid rgba(255,255,255,.5); border-radius: 18px; color: #263b3a; background: #fffdf8; box-shadow: 0 24px 70px rgba(24,38,37,.25); direction: rtl; animation: font-info-rise .22s var(--ease-out, ease); }
+.font-info-dialog-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding-bottom: 15px; border-bottom: 1px solid #ece5da; }
+.font-info-dialog-header .panel-eyebrow { margin-bottom: 7px; text-align: right; }
+.font-info-dialog h2 { margin: 0; color: #185c5d; font-family: "Amiri", serif; font-size: 29px; line-height: 1; }
+.font-info-close { display: grid; place-items: center; width: 31px; height: 31px; border: 1px solid #dfd4c6; border-radius: 9px; color: #7d6f63; background: #fffaf2; cursor: pointer; transition: color .16s ease, background .16s ease, transform .16s ease; }
+.font-info-close:hover { color: #185c5d; background: #edf4ed; }
+.font-info-close:active { transform: scale(.94); }
+.font-info-lead { margin: 14px 0 16px; color: #71817c; font-size: 11px; line-height: 1.7; }
+.font-info-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.font-info-grid > div { min-width: 0; padding: 11px 12px; border: 1px solid #e4e8df; border-radius: 10px; background: #f7faf5; }
+.font-info-grid span { display: block; margin-bottom: 5px; color: #87948e; font-size: 9px; }
+.font-info-grid strong { display: block; overflow-wrap: anywhere; color: #3b5c59; font-size: 11px; font-weight: 600; line-height: 1.55; }
+.font-info-notes { display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; padding: 11px 12px; border-radius: 10px; color: #52706a; background: #edf5ee; }
+.font-info-notes svg { flex: 0 0 auto; margin-top: 2px; color: #4d9180; }
+.font-info-notes p { margin: 0; font-size: 10px; line-height: 1.75; }
+.font-info-source { display: inline-flex; align-items: center; gap: 5px; margin-top: 15px; color: #a36139; font-size: 10px; font-weight: 600; text-decoration: none; }
+.font-info-source:hover { color: #185c5d; }
+.font-info-source svg { transform: rotate(90deg); }
+.font-info-source.is-muted { color: #929b94; font-weight: 400; }
+@keyframes font-info-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes font-info-rise { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.dark .font-info-button { border-color: #3d605b; color: #acd1c1; background: #203a39; }
+.dark .font-info-button:hover { border-color: #6aa898; background: #294947; }
+.dark .font-info-dialog { color: #dbe8df; border-color: #3c5a58; background: #1e3536; }
+.dark .font-info-dialog-header { border-color: #36514f; }
+.dark .font-info-dialog h2 { color: #b8ded0; }
+.dark .font-info-close { border-color: #45605c; color: #b0c5bb; background: #263f3f; }
+.dark .font-info-lead { color: #9eb6aa; }
+.dark .font-info-grid > div { border-color: #385453; background: #243d3d; }
+.dark .font-info-grid span { color: #92aaa0; }
+.dark .font-info-grid strong { color: #c7dfd3; }
+.dark .font-info-notes { color: #b0cbbd; background: #274745; }
+@media (max-width: 620px) {
+  .font-info-backdrop { padding: 12px; align-items: end; }
+  .font-info-dialog { max-height: calc(100vh - 24px); padding: 19px 16px 18px; border-radius: 17px 17px 12px 12px; }
+  .font-info-dialog h2 { font-size: 25px; }
+  .font-info-grid { grid-template-columns: 1fr; gap: 7px; }
+  .font-info-grid > div { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 9px 10px; }
+  .font-info-grid span { margin: 0; }
+  .font-info-grid strong { text-align: left; }
+}
