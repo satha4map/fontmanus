@@ -405,7 +405,7 @@ export default function Home() {
         <section className="premium-banner" aria-label="مختبر أحمد النهر">
           <div className="premium-banner-copy">
             <div className="premium-eyebrow"><span /> مختبر عربي متقدم للخطوط <span /></div>
-            <h1 style={{fontWeight: '600'}}>مختبـــر أحمـــــد النهـــر</h1>
+            <h1>مختبـــر أحمـــــد النهـــر</h1>
             <p>اكتشف خصائص OpenType، جرّبها بصرياً، واصنع نسخة خط جاهزة للاستخدام.</p>
           </div>
           <div className="premium-banner-stats" aria-label="إحصاءات المختبر">

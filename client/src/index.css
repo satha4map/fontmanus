@@ -691,3 +691,17 @@ html[data-color-theme="sunset"] .telegram-top-button, html[data-color-theme="sun
 
 /* The studio identity uses the uploaded Sultan display face. */
 .brand-name, .workspace-title, .premium-banner h1 { font-family: "SFSultan2", "Amiri", serif; }
+
+/* Responsive Sultan title scale: fluid sizing plus lighter mobile weight. */
+.brand-name { font-size: clamp(14px, 1.15vw, 18px); font-weight: 600; line-height: 1.15; }
+.workspace-title { font-size: clamp(16px, 1.45vw, 21px); font-weight: 600; line-height: 1.1; }
+.premium-banner h1 { max-width: 100%; font-size: clamp(32px, 4.25vw, 60px); font-weight: 600; line-height: .94; letter-spacing: clamp(-.055em, -.09vw, -.025em); text-wrap: balance; }
+@media (max-width: 900px) {
+  .premium-banner h1 { font-size: clamp(30px, 6.4vw, 46px); font-weight: 500; line-height: .98; }
+  .workspace-title { font-size: clamp(16px, 2.8vw, 20px); font-weight: 500; }
+}
+@media (max-width: 620px) {
+  .brand-name { font-size: clamp(14px, 4.2vw, 17px); font-weight: 500; }
+  .workspace-title { font-size: clamp(15px, 4.8vw, 19px); font-weight: 500; }
+  .premium-banner h1 { max-width: 100%; font-size: clamp(29px, 9.4vw, 42px); font-weight: 500; line-height: .98; letter-spacing: -.035em; }
+}
