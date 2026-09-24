@@ -3,15 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+
     <meta name="theme-color" content="#1d292b" />
     <meta name="description" content="مختبر أحمد النهر — مختبر عربي تفاعلي لاستعراض وتفعيل خصائص خطوط OpenType." />
+
     <title>مختبر أحمد النهر</title>
-    <link rel="Icon" type="image/PNG" href="/Icon.PNG">
-<link rel="apple-touch-Icon" href="/Icon.PNG">
+
+    <!-- Browser Icon -->
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon.png">
+
+    <!-- iPhone Home Screen Icon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon.png">
+
+    <!-- App Name -->
+    <meta name="apple-mobile-web-app-title" content="مختبر أحمد النهر">
+
   </head>
+
   <body>
     <div id="root"></div>
+
     <script type="module" src="/src/main.tsx"></script>
-    <script defer src="%VITE_ANALYTICS_ENDPOINT%/umami" data-website-id="%VITE_ANALYTICS_WEBSITE_ID%"></script>
+
+    <script 
+      defer 
+      src="%VITE_ANALYTICS_ENDPOINT%/umami" 
+      data-website-id="%VITE_ANALYTICS_WEBSITE_ID%">
+    </script>
+
   </body>
 </html>
