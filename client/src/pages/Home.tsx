@@ -159,6 +159,7 @@ export default function Home() {
   const [exportError, setExportError] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState(64);
   const [lineHeight, setLineHeight] = useState(1.45);
+  const [letterSpacing, setLetterSpacing] = useState(0);
   const [text, setText] = useState(samplePresets[0]);
   const [selectedTemplateId, setSelectedTemplateId] = useState("default");
   const [copied, setCopied] = useState(false);
@@ -194,8 +195,8 @@ export default function Home() {
   );
 
   const cssSnippet = useMemo(
-    () => `.your-text {\n  font-family: ${chosenFont.family};\n  font-size: ${fontSize}px;\n  line-height: ${lineHeight};\n  font-feature-settings: ${featureSettings};${variationSettings ? `\n  font-variation-settings: ${variationSettings};` : ""}\n}`,
-    [chosenFont, featureSettings, variationSettings, fontSize, lineHeight],
+    () => `.your-text {\n  font-family: ${chosenFont.family};\n  font-size: ${fontSize}px;\n  letter-spacing: ${letterSpacing.toFixed(3)}em;\n  line-height: ${lineHeight};\n  font-feature-settings: ${featureSettings};${variationSettings ? `\n  font-variation-settings: ${variationSettings};` : ""}\n}`,
+    [chosenFont, featureSettings, variationSettings, fontSize, letterSpacing, lineHeight],
   );
 
   function toggleFeature(code: string) {
@@ -335,6 +336,7 @@ export default function Home() {
     setAxisValues(Object.fromEntries(variableAxes.map((axis) => [axis.tag, axis.default])));
     setFontSize(64);
     setLineHeight(1.45);
+    setLetterSpacing(0);
     setText(samplePresets[0]);
     setSelectedTemplateId("default");
     setSelectedFeature("liga");
@@ -484,6 +486,7 @@ export default function Home() {
                   className={`preview-text ${chosenFont.className}`}
                   style={{
                     fontSize: `clamp(38px, ${fontSize / 13}vw, ${fontSize}px)`,
+                    letterSpacing: `${letterSpacing}em`,
                     lineHeight,
                     fontFamily: chosenFont.family,
                     fontFeatureSettings: featureSettings,
@@ -577,14 +580,21 @@ export default function Home() {
                     ))}
                   </div>
                 )}
-                <label className="slider-control">
-                  <span>حجم الحرف <b>{fontSize}px</b></span>
-                  <input type="range" min="34" max="96" value={fontSize} onChange={(event) => setFontSize(Number(event.target.value))} />
-                </label>
-                <label className="slider-control">
-                  <span>تباعد الأسطر <b>{lineHeight.toFixed(2)}</b></span>
-                  <input type="range" min="1.1" max="2" step="0.05" value={lineHeight} onChange={(event) => setLineHeight(Number(event.target.value))} />
-                </label>
+                <div className="typography-tuning-panel">
+                  <div className="typography-tuning-heading"><span><Settings2 size={14} /> ضبط دقيق للمسافات</span><button type="button" onClick={() => { setFontSize(64); setLetterSpacing(0); setLineHeight(1.45); }}>إعادة ضبط القياسات</button></div>
+                  <label className="precision-control">
+                    <span><em>حجم الحرف</em><b>{fontSize}px</b></span>
+                    <div className="precision-inputs"><input type="range" min="34" max="96" value={fontSize} onChange={(event) => setFontSize(Number(event.target.value))} /><input type="number" min="34" max="96" value={fontSize} onChange={(event) => setFontSize(Math.min(96, Math.max(34, Number(event.target.value) || 34)))} aria-label="حجم الحرف بالبكسل" /></div>
+                  </label>
+                  <label className="precision-control">
+                    <span><em>تباعد الأحرف</em><b>{letterSpacing.toFixed(3)}em</b></span>
+                    <div className="precision-inputs"><input type="range" min="-0.06" max="0.2" step="0.005" value={letterSpacing} onChange={(event) => setLetterSpacing(Number(event.target.value))} /><input type="number" min="-0.06" max="0.2" step="0.005" value={letterSpacing} onChange={(event) => setLetterSpacing(Math.min(0.2, Math.max(-0.06, Number(event.target.value) || 0)))} aria-label="تباعد الأحرف بوحدة em" /></div>
+                  </label>
+                  <label className="precision-control">
+                    <span><em>ارتفاع الأسطر</em><b>{lineHeight.toFixed(2)}</b></span>
+                    <div className="precision-inputs"><input type="range" min="1.1" max="2" step="0.05" value={lineHeight} onChange={(event) => setLineHeight(Number(event.target.value))} /><input type="number" min="1.1" max="2" step="0.05" value={lineHeight} onChange={(event) => setLineHeight(Math.min(2, Math.max(1.1, Number(event.target.value) || 1.1)))} aria-label="ارتفاع الأسطر" /></div>
+                  </label>
+                </div>
               </div>
               <div className={`export-note ${exportError ? "has-error" : ""}`}><Info size={14} /><span>{exportError ?? "يعالج الخادم الخط عبر FontTools ويعيد ملف TTF/OTF جديداً مع تثبيت الخصائص المختارة داخل GSUB/GPOS."}</span></div>
             </section>
